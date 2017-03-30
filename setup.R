@@ -13,7 +13,7 @@ compileAttributes(pkgdir = pkg.path)
 document(pkg = pkg.path)
 install(pkg = pkg.path)
 
-build(pkg = pkg.path, path = build.path)
+devtools::build(pkg = pkg.path, path = build.path)
 
 
 #--- ONLY EXECUTE THIS ONCE -----------------------------------------------------

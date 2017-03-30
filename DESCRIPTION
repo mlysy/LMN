@@ -8,7 +8,7 @@ Maintainer: Martin Lysy <mlysy@uwaterloo.ca>
 Description: Many statistical models have a subset of parameters which, conditioned on the others, has the likelihood function of a linear regression model.  This package provides tools to efficiently treat the members of this subset as "nuisance" parameters, either by profiling or integrating them out.  The latter is under a conjugate Matrix-Normal Inverse-Wishart (MNIW) distribution.  While arbitrary error correlations are supported,  optimized calculations are provided for Independent-Heteroscedastic and Stationary-Correlated error structures.
 License: GPL 3
 Imports:
-    Rcpp (>= 0.12.4.4), SuperGauss
+    Rcpp (>= 0.12.4.4)
 LinkingTo: Rcpp, RcppEigen
 RoxygenNote: 6.0.1
-Suggests: testthat, numDeriv
+Suggests: testthat, SuperGauss, numDeriv
