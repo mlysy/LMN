@@ -21,4 +21,3 @@ Note that the hyperparameters can depend on \code{theta}, e.g., \code{Lambda(the
 \item \code{nu = NA}: No \code{Sigma}, i.e., Y ~ MN(X * Beta, V, I).
 }
 }
-

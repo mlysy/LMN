@@ -9,4 +9,3 @@ lmn.loglik(Beta, Sigma, suff, Y, X, V, acf)
 \description{
 Log-likelihood function for LMN models
 }
-

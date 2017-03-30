@@ -42,6 +42,7 @@
 #'    \item \code{Xp = x - t(w)V^{-1}X}
 #'    \item \code{Vp = v - t(w)V^{-1}w}
 #' }
+#' @import SuperGauss
 #' @export
 lmn.suff <- function(Y, X, V, acf, npred = 0,
                      debug = FALSE) {
@@ -69,9 +70,15 @@ lmn.suff <- function(Y, X, V, acf, npred = 0,
       stop("Given V is incompatible with nrow(Y) and npred.")
     }
   } else if(!missing(acf)) {
-    if(length(acf) == n + npred) {
+    if(is.vector(acf)) {
       var.type <- "acf"
-    } else {
+    } else if(class(acf) == "Toeplitz_Matrix") {
+      if(npred > 0) stop("npred > 0 for Toeplitz_Matrix not supported.")
+      var.type <- "Toeplitz_Matrix"
+      Tz <- acf
+      acf <- Tz$getAcf()
+    }
+    if(length(acf) != n + npred) {
       stop("Given acf is incompatible with nrow(Y) and npred.")
     }
   } else {
@@ -104,6 +111,9 @@ lmn.suff <- function(Y, X, V, acf, npred = 0,
                               acf = acf[1:n], calcMode = 1)
     IP <- DL$IP
     ldV <- DL$ldV
+  } else if(var.type == "Toeplitz_Matrix") {
+    IP <- crossprod(Z, solve(Tz, Z))
+    ldV <- determinant(Tz, log = TRUE)
   } else {
     stop("Unrecognized variance type.")
   }

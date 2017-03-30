@@ -3,6 +3,7 @@
 require(devtools)
 require(Rcpp)
 require(RcppEigen)
+require(SuperGauss)
 
 pkg.name <- "LMN"
 pkg.path <- "C:/Users/Jerome/Documents/R/LMN"

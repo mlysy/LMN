@@ -18,4 +18,3 @@ lmn.marg(suff, Y, X, V, acf, post, prior, noSigma, debug = FALSE)
 \description{
 Marginal Log-Posterior for the LMN Model
 }
-
