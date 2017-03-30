@@ -3,7 +3,7 @@
 require(devtools)
 require(Rcpp)
 require(RcppEigen)
-require(SuperGauss)
+#require(SuperGauss)
 
 pkg.name <- "LMN"
 pkg.path <- "C:/Users/Jerome/Documents/R/LMN"
@@ -14,6 +14,8 @@ document(pkg = pkg.path)
 install(pkg = pkg.path)
 
 devtools::build(pkg = pkg.path, path = build.path)
+
+testthat::test_package("LMN")
 
 
 #--- ONLY EXECUTE THIS ONCE -----------------------------------------------------

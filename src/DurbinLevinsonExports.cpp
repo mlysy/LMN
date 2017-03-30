@@ -1,13 +1,68 @@
-// Durbin Levinson algorithm for inner products of the form
-// M = X' toeplitz(acf)^{-1} Y
+// Durbin Levinson algorithms
 //
-// Two versions: with and without eigen
+// (1) inner products of the form:
+//     M = X' toeplitz(acf)^{-1} Y
+// (2) obtain either X or Z from the other in:
+//     X = chol(toeplitz(acf))' Z
 
 #include <Rcpp.h>
 using namespace Rcpp;
 #include <RcppEigen.h>
 // [[Rcpp::depends(RcppEigen)]]
-#include "DurbinLevinson.h"
+#include "DurbinLevinsonIP.h"
+#include "DurbinLevinsonXZ.h"
+
+////////////////////////////////////////////////////
+
+// DurbinLevinsonXZ
+
+// different functions for X->Z and Z->X
+
+//[[Rcpp::export("toeplitzXZ")]]
+Eigen::MatrixXd DurbinLevinson_XZ(Eigen::MatrixXd X, Eigen::VectorXd acf) {
+  int n, k;
+  n = acf.size();
+  k = X.cols();
+  // output
+  MatrixXd Z(n,k);
+  // tmp
+  VectorXd phi(n);
+  VectorXd phi2(n);
+  VectorXd res(k);
+  MatrixXd Xt(k,n);
+  MatrixXd Zt(k,n);
+
+  Xt = X.transpose();
+  DurbinLevinsonXZ(Xt, Zt, acf, phi, phi2, res, false);
+  Z = Zt.transpose();
+  return(Z);
+}
+
+//[[Rcpp::export("toeplitzZX")]]
+Eigen::MatrixXd DurbinLevinson_ZX(Eigen::MatrixXd Z, Eigen::VectorXd acf) {
+  int n, k;
+  n = acf.size();
+  k = Z.cols();
+  // output
+  MatrixXd X(n,k);
+  // tmp
+  VectorXd phi(n);
+  VectorXd phi2(n);
+  VectorXd res(k);
+  MatrixXd Xt(k,n);
+  MatrixXd Zt(k,n);
+
+  Zt = Z.transpose();
+  DurbinLevinsonXZ(Xt, Zt, acf, phi, phi2, res, true);
+  X = Xt.transpose();
+  return(X);
+}
+
+////////////////////////////////////////////////////
+
+// DurbinLevinsonIP
+
+// Two versions: Eigen and Base.  Former is almost always faster.
 
 //[[Rcpp::export("DurbinLevinsonEigen")]]
 Rcpp::List DurbinLevinson_Eigen(Eigen::MatrixXd X, Eigen::MatrixXd Y,
@@ -15,8 +70,8 @@ Rcpp::List DurbinLevinson_Eigen(Eigen::MatrixXd X, Eigen::MatrixXd Y,
 				     int calcMode = 1) {
   int n, d, k;
   n = acf.size();
-  d = X.rows();
-  k = calcMode == 1 ? X.rows() : Y.rows();
+  d = X.cols();
+  k = calcMode == 1 ? d : Y.cols();
   // output
   MatrixXd M(calcMode != 2 ? d : 1, k);
   double ldV = 0.0;
@@ -25,8 +80,14 @@ Rcpp::List DurbinLevinson_Eigen(Eigen::MatrixXd X, Eigen::MatrixXd Y,
   VectorXd phi2(n);
   VectorXd rx(d);
   VectorXd ry(k);
+  MatrixXd Xt(d,n);
+  MatrixXd Yt(calcMode == 1 ? 1 : k, calcMode == 1 ? 1 : n);
 
-  DurbinLevisonEigen(M, ldV, X, Y, acf, phi, phi2, rx, ry, calcMode);
+  Xt = X.transpose();
+  if(calcMode != 1) {
+    Yt = Y.transpose();
+  }
+  DurbinLevisonEigen(M, ldV, Xt, Yt, acf, phi, phi2, rx, ry, calcMode);
   return List::create(_["IP"] = wrap(M), _["ldV"] = wrap(ldV));
 }
 

@@ -6,6 +6,30 @@
 
 using namespace Rcpp;
 
+// DurbinLevinson_XZ
+Eigen::MatrixXd DurbinLevinson_XZ(Eigen::MatrixXd X, Eigen::VectorXd acf);
+RcppExport SEXP LMN_DurbinLevinson_XZ(SEXP XSEXP, SEXP acfSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type X(XSEXP);
+    Rcpp::traits::input_parameter< Eigen::VectorXd >::type acf(acfSEXP);
+    rcpp_result_gen = Rcpp::wrap(DurbinLevinson_XZ(X, acf));
+    return rcpp_result_gen;
+END_RCPP
+}
+// DurbinLevinson_ZX
+Eigen::MatrixXd DurbinLevinson_ZX(Eigen::MatrixXd Z, Eigen::VectorXd acf);
+RcppExport SEXP LMN_DurbinLevinson_ZX(SEXP ZSEXP, SEXP acfSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type Z(ZSEXP);
+    Rcpp::traits::input_parameter< Eigen::VectorXd >::type acf(acfSEXP);
+    rcpp_result_gen = Rcpp::wrap(DurbinLevinson_ZX(Z, acf));
+    return rcpp_result_gen;
+END_RCPP
+}
 // DurbinLevinson_Eigen
 Rcpp::List DurbinLevinson_Eigen(Eigen::MatrixXd X, Eigen::MatrixXd Y, Eigen::VectorXd acf, int calcMode);
 RcppExport SEXP LMN_DurbinLevinson_Eigen(SEXP XSEXP, SEXP YSEXP, SEXP acfSEXP, SEXP calcModeSEXP) {
