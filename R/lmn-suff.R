@@ -107,8 +107,8 @@ lmn.suff <- function(Y, X, V, acf, npred = 0,
     if(npred > 0) {
       Z[,q+p+(1:npred)] <- toeplitz2(rev(acf[1+1:n]), acf[n+1:npred])
     }
-    DL <- DurbinLevinsonEigen(X = t(Z), Y = matrix(0),
-                              acf = acf[1:n], calcMode = 1)
+    DL <- .DurbinLevinsonEigen(X = Z, Y = matrix(0),
+                               acf = acf[1:n], calcMode = 1)
     IP <- DL$IP
     ldV <- DL$ldV
   } else if(var.type == "Toeplitz_Matrix") {
