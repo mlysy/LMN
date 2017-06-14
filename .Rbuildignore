@@ -1,5 +1,2 @@
 # compiled object files
-^.*.o$
-^.*.dll$
 setup.R
-test.R

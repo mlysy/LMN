@@ -1,12 +1,12 @@
 Package: LMN
 Type: Package
-Title: (L)inear (M)odels for (N)uisance Parameters
-Version: 0.0.0.9010
-Date: 2016-05-14
+Title: Inference for (L)inear (M)odels with (N)uisance Parameters
+Version: 0.0.1.9000
+Date: 2017-06-14
 Author: Martin Lysy
 Maintainer: Martin Lysy <mlysy@uwaterloo.ca>
-Description: Many statistical models have a subset of parameters which, conditioned on the others, has the likelihood function of a linear regression model.  This package provides tools to efficiently treat the members of this subset as "nuisance" parameters, either by profiling or integrating them out.  The latter is under a conjugate Matrix-Normal Inverse-Wishart (MNIW) distribution.  While arbitrary error correlations are supported,  optimized calculations are provided for Independent-Heteroscedastic and Stationary-Correlated error structures.
-License: GPL 3
+Description: Efficient Frequentist profiling and Bayesian marginalization of parameters for which the conditional likelihood is that of a multivariate linear regression model.  While optimal inter-observation error correlations are support, optimized calculations are provided for independent-heteroskedastic and stationary dependence structures.
+License: GPL-3
 Imports:
     Rcpp (>= 0.12.4.4)
 LinkingTo: Rcpp, RcppEigen

@@ -9,9 +9,9 @@ pkg.name <- "LMN"
 pkg.path <- "C:/Users/Jerome/Documents/R/LMN"
 build.path <- "C:/Users/Jerome/Documents/R/build"
 
-compileAttributes(pkgdir = pkg.path)
-document(pkg = pkg.path)
-install(pkg = pkg.path)
+Rcpp::compileAttributes()
+devtools::document()
+devtools::install()
 
 devtools::build(pkg = pkg.path, path = build.path)
 
