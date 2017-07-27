@@ -8,7 +8,7 @@ using namespace Rcpp;
 
 // DurbinLevinson_XZ
 Eigen::MatrixXd DurbinLevinson_XZ(Eigen::MatrixXd X, Eigen::VectorXd acf);
-RcppExport SEXP LMN_DurbinLevinson_XZ(SEXP XSEXP, SEXP acfSEXP) {
+RcppExport SEXP _LMN_DurbinLevinson_XZ(SEXP XSEXP, SEXP acfSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -20,7 +20,7 @@ END_RCPP
 }
 // DurbinLevinson_ZX
 Eigen::MatrixXd DurbinLevinson_ZX(Eigen::MatrixXd Z, Eigen::VectorXd acf);
-RcppExport SEXP LMN_DurbinLevinson_ZX(SEXP ZSEXP, SEXP acfSEXP) {
+RcppExport SEXP _LMN_DurbinLevinson_ZX(SEXP ZSEXP, SEXP acfSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -32,7 +32,7 @@ END_RCPP
 }
 // DurbinLevinson_Eigen
 Rcpp::List DurbinLevinson_Eigen(Eigen::MatrixXd X, Eigen::MatrixXd Y, Eigen::VectorXd acf, int calcMode);
-RcppExport SEXP LMN_DurbinLevinson_Eigen(SEXP XSEXP, SEXP YSEXP, SEXP acfSEXP, SEXP calcModeSEXP) {
+RcppExport SEXP _LMN_DurbinLevinson_Eigen(SEXP XSEXP, SEXP YSEXP, SEXP acfSEXP, SEXP calcModeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -46,7 +46,7 @@ END_RCPP
 }
 // DurbinLevinson_Base
 Rcpp::List DurbinLevinson_Base(NumericMatrix X, NumericMatrix Y, NumericVector acf, int calcMode);
-RcppExport SEXP LMN_DurbinLevinson_Base(SEXP XSEXP, SEXP YSEXP, SEXP acfSEXP, SEXP calcModeSEXP) {
+RcppExport SEXP _LMN_DurbinLevinson_Base(SEXP XSEXP, SEXP YSEXP, SEXP acfSEXP, SEXP calcModeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -60,10 +60,10 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"LMN_DurbinLevinson_XZ", (DL_FUNC) &LMN_DurbinLevinson_XZ, 2},
-    {"LMN_DurbinLevinson_ZX", (DL_FUNC) &LMN_DurbinLevinson_ZX, 2},
-    {"LMN_DurbinLevinson_Eigen", (DL_FUNC) &LMN_DurbinLevinson_Eigen, 4},
-    {"LMN_DurbinLevinson_Base", (DL_FUNC) &LMN_DurbinLevinson_Base, 4},
+    {"_LMN_DurbinLevinson_XZ", (DL_FUNC) &_LMN_DurbinLevinson_XZ, 2},
+    {"_LMN_DurbinLevinson_ZX", (DL_FUNC) &_LMN_DurbinLevinson_ZX, 2},
+    {"_LMN_DurbinLevinson_Eigen", (DL_FUNC) &_LMN_DurbinLevinson_Eigen, 4},
+    {"_LMN_DurbinLevinson_Base", (DL_FUNC) &_LMN_DurbinLevinson_Base, 4},
     {NULL, NULL, 0}
 };
 

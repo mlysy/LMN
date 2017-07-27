@@ -42,7 +42,6 @@
 #'    \item \code{Xp = x - t(w)V^{-1}X}
 #'    \item \code{Vp = v - t(w)V^{-1}w}
 #' }
-#' @import SuperGauss
 #' @export
 lmn.suff <- function(Y, X, V, acf, npred = 0,
                      debug = FALSE) {
@@ -72,9 +71,9 @@ lmn.suff <- function(Y, X, V, acf, npred = 0,
   } else if(!missing(acf)) {
     if(is.vector(acf)) {
       var.type <- "acf"
-    } else if(class(acf) == "Toeplitz_Matrix") {
-      if(npred > 0) stop("npred > 0 for Toeplitz_Matrix not supported.")
-      var.type <- "Toeplitz_Matrix"
+    } else if(class(acf) == "Toeplitz") {
+      if(npred > 0) stop("npred > 0 for Toeplitz not supported.")
+      var.type <- "Toeplitz"
       Tz <- acf
       acf <- Tz$getAcf()
     }
@@ -111,7 +110,7 @@ lmn.suff <- function(Y, X, V, acf, npred = 0,
                                acf = acf[1:n], calcMode = 1)
     IP <- DL$IP
     ldV <- DL$ldV
-  } else if(var.type == "Toeplitz_Matrix") {
+  } else if(var.type == "Toeplitz") {
     IP <- crossprod(Z, solve(Tz, Z))
     ldV <- determinant(Tz, log = TRUE)
   } else {

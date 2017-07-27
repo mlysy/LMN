@@ -6,7 +6,7 @@ context("Suff")
 test_that("Sufficient statistics are correctly computed.", {
   calc.diff <- FALSE
   case.par <- expand.grid(p = c(-1, 0, 1, 3, 5), q = c(1, 3, 5),
-                          type = c("scalar", "diag", "acf", "V"),
+                          type = c("scalar", "diag", "acf", "Toeplitz", "V"),
                           noSigma = c(TRUE, FALSE))
   ncases <- nrow(case.par)
   n <- 20
@@ -48,6 +48,8 @@ test_that("Sufficient statistics are correctly computed.", {
     # calculate with lmn.suff
     if(type == "acf") {
       suff <- lmn.suff(Y = Y, X = XX, acf = acf)
+    } else if(type == "Toeplitz") {
+      suff <- lmn.suff(Y = Y, X = XX, acf = Toeplitz(acf = acf))
     } else {
       suff <- lmn.suff(Y = Y, X = XX, V = VV)
     }

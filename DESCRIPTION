@@ -9,6 +9,6 @@ Description: Efficient Frequentist profiling and Bayesian marginalization of par
 License: GPL-3
 Imports:
     Rcpp (>= 0.12.4.4)
-LinkingTo: Rcpp, RcppEigen
+LinkingTo: Rcpp, RcppEigen, SuperGauss
 RoxygenNote: 6.0.1
-Suggests: testthat, SuperGauss, numDeriv
+Suggests: testthat, numDeriv

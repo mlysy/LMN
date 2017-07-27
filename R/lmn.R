@@ -14,6 +14,7 @@
 #' }
 #' @docType package
 #' @name LMN
+#' @import SuperGauss
 #' @importFrom Rcpp evalCpp
 #' @useDynLib LMN
 NULL
