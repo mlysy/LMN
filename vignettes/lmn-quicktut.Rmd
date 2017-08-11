@@ -1,0 +1,82 @@
+---
+title: "**`LMN`**: Marginal Inference for Linear Models with Nuisance Parameters"
+author: "Bryan Yates, Martin Lysy"
+date: "`r Sys.Date()`"
+output:
+  html_vignette:
+    toc: true
+bibliography: references.bib
+csl: taylor-and-francis-harvard-x.csl
+link-citations: true
+vignette: >
+  %\VignetteIndexEntry{Getting started with LMN}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+\newcommand{\Y}{\boldsymbol{Y}}
+\newcommand{\X}{\boldsymbol{X}}
+\newcommand{\V}{\boldsymbol{V}}
+\newcommand{\Z}{\boldsymbol{Z}}
+\newcommand{\bb}{\boldsymbol{\beta}}
+\newcommand{\SS}{\boldsymbol{\Sigma}}
+\newcommand{\MN}{{\scriptsize \textrm{MN}}}
+\newcommand{\tt}{\boldsymbol{\theta}}
+\newcommand{\LL}{\boldsymbol{\Lambda}}
+\newcommand{\OO}{\boldsymbol{\Omega}}
+\newcommand{\TT}{\boldsymbol{\Theta}}
+\newcommand{\N}{\mathcal{N}}
+\renewcommand{\vec}{{\small \textrm{vec}}}
+\newcommand{\ud}{\mathrm{d}}
+\newcommand{\a}{\alpha}
+\newcommand{\g}{\gamma}
+\newcommand{\s}{\sigma}
+\newcommand{\l}{\lambda}
+\newcommand{\dt}{\Delta t}
+\newcommand{\mm}{\boldsymbol{\mu}}
+\newcommand{\ee}{\boldsymbol{\eta}}
+\newcommand{\var}{\mathrm{var}}
+\newcommand{\cov}{\mathrm{cov}}
+\newcommand{\iid}{\stackrel {\textrm{iid}}{\sim}}
+\newcommand{\ind}{\stackrel {\textrm{ind}}{\sim}}
+
+## Introduction
+
+The **`LMN`** package provides several functions to facilitate inference with multivariate regression models of the form
+$$
+\Y \sim \MN(\X_\tt \bb, \V_\tt, \SS),
+$$
+where $\Y_{n\times q}$ is the response matrix, $\X_\tt = \X_{n \times p}$ is the design matrix which depends on parameters $\tt$, $\V_\tt = \V_{n \times n}$ and $\SS_{q \times q}$ are between-row and between-column variance matrices, $\bb_{p \times q}$ are regression coefficients, and $\MN(\LL, \OO, \SS)$ denotes the Matrix-Normal distribution:
+$$
+\Z_{p \times q} \sim \MN(\LL_{p \times q}, \OO_{p \times p}, \SS_{q \times q}) \quad \iff \quad \vec(\Z) \sim \N(\vec(\LL), \SS \otimes \OO).
+$$
+The parameters of the regression model are $\TT = (\tt, \bb, \SS)$.
+
+## Example 1: Fractional Brownian Motion
+
+2-d model with quadratic drift:
+$$
+\X_t = \mm t + \ee t^2 + \SS^{1/2} \Z_t,
+$$
+where $\Z_t = (Z_{1t}, Z_{2t})$ are iid fBM processes, i.e., continuous Gaussian processes with mean 0 and
+$$
+\cov(Z_s, Z_t) = \tfrac 1 2 (|t|^\a + |s|^\a - |t-s|^\a), \qquad 0 < \a < 2.
+$$
+
+### Profile Likelihood
+
+## Example 2: Generalized Cox-Ingersoll-Ross Process
+
+SDE model of @chan.etal92 is given by
+$$
+\ud X_t = -\g(X_t - \mu) \ud t + \s X_t^\l\ud B_t.
+$$
+Discrete-time approximation is
+$$
+\Delta X_n \sim \N\big( -\g(X_n - \mu)\dt, \s^2 X_n^{2\l} \dt\big),
+$$
+where $X_n = X_{n \cdot \dt}$ and $\Delta X_n = X_{n+1} - X_n$.
+
+### Bayesian Inference
+
+## References

@@ -16,5 +16,5 @@
 #' @name LMN
 #' @import SuperGauss
 #' @importFrom Rcpp evalCpp
-#' @useDynLib LMN
+#' @useDynLib LMN, .registration = TRUE
 NULL

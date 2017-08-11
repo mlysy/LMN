@@ -11,4 +11,7 @@ Imports:
     Rcpp (>= 0.12.4.4)
 LinkingTo: Rcpp, RcppEigen, SuperGauss
 RoxygenNote: 6.0.1
-Suggests: testthat, numDeriv
+Suggests: testthat, numDeriv,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
