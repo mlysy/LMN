@@ -9,34 +9,34 @@ lmn.suff(Y, X, V, acf, npred = 0, debug = FALSE)
 \arguments{
 \item{Y}{an (n x q) matrix.}
 
-\item{X}{an (n x p) matrix. can also be passed as
+\item{X}{an (n x p) matrix. May also be passed as
 \itemize{
-   \item \code{X = 0}: in which case there is no intercept
+   \item \code{X = 0}: in which case there is no intercept,
    \item \code{X != 0}: in which case a scaled intercept X = X * matrix(1, n, 1)
    is assumed.
 }}
 
-\item{V}{Either: (1) an \code{n x n} full matrix, (2) an vector of length \code{n} such that \code{V = diag(V)}, (3) a scalar, such that \code{V = V * diag(n)}.}
+\item{V}{either: (1) an \code{n x n} full matrix, (2) an vector of length \code{n} such that \code{V = diag(V)}, (3) a scalar, such that \code{V = V * diag(n)}.}
 
 \item{acf}{a vector of length n such that V = toeplitz(acf).}
 
-\item{npred:}{an integer.  if nonzero, returns sufficient statistics to make predictions for \code{y | Y, Beta, Sigma} (see details).}
+\item{npred:}{an integer.  If nonzero, returns sufficient statistics to make predictions for \code{y | Y, Beta, Sigma} (see details).}
 }
 \value{
-a list with the following elements:
-\itemize{
-   \item \code{Betahat = (t(X)V^{-1}X)^{-1}t(X)V^{-1}Y}
-   \item \code{T = t(X)V^{-1}X}
-   \item \code{S = t(Y-X*Betahat)V^{-1}(Y-X*Betahat)}
-   \item \code{ldV = log(|V|)}
-   \item \code{n = nrow(Y)}
-   \item \code{noBeta} and \code{noSigma}
+A list with the following elements:
+\describe{
+   \item{\code{Betahat = (t(X)V^{-1}X)^{-1}t(X)V^{-1}Y}}{}
+   \item{\code{T = t(X)V^{-1}X}}{}
+   \item{\code{S = t(Y-X*Betahat)V^{-1}(Y-X*Betahat)}}{}
+   \item{\code{ldV = log(|V|)}}{}
+   \item{\code{n = nrow(Y)}}{}
+   \item{\code{noBeta} and \code{noSigma}}{}
 }
 In addition, when \code{npred > 0}:
-\itemize{
-   \item \code{Ap = t(w)V^{-1}Y}
-   \item \code{Xp = x - t(w)V^{-1}X}
-   \item \code{Vp = v - t(w)V^{-1}w}
+\describe{
+   \item{\code{Ap = t(w)V^{-1}Y}}{}
+   \item{\code{Xp = x - t(w)V^{-1}X}}{}
+   \item{\code{Vp = v - t(w)V^{-1}w}}{}
 }
 }
 \description{
@@ -53,9 +53,29 @@ The log-likelihood is
 When \code{T = 0} and \code{S = 0} respectively, \code{Beta = 0} or \code{Sigma = diag(q)} is assumed to be known.
 
 If \code{npred > 0}, summary statistics are produced for the prediction of \code{y} in
-   \deqn{\code{YY = rbind(Y, y) ~ MNorm(XX*Beta, VV, Sigma)},}
+   \deqn{YY = rbind(Y, y) ~ MNorm(XX*Beta, VV, Sigma),}
    where \code{VV = rbind(cbind(V, w), cbind(t(w), v))} and \code{XX = rbind(X, x)}.
    In this case the inputs are \code{Y}, \code{V = VV} and \code{X = XX}. The predictive distribution for new observations y is
 \deqn{y | Y ~ MNorm(Ap + Xp * Beta, Vp, Sigma).}
 \code{Xp = 0} indicates that \code{Beta = 0} is known.
+}
+\examples{
+## Data
+Y = matrix(rnorm(100),50,2)
+
+## No intercept example, diagonal V input
+X = 0
+V = exp(-seq(1:nrow(Y)))
+lmn.suff(Y, X, V=V)
+
+## Intercept example, scalar V input
+X = matrix(1,50,1)
+V = 0.5
+lmn.suff(Y, X, V=V)
+
+## acf example, scaled intercept input
+X = 3/2
+acf = 0.5*exp(-seq(1:nrow(Y)))
+lmn.suff(Y, X, acf=acf)
+
 }

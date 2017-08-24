@@ -2,30 +2,63 @@
 % Please edit documentation in R/lmn-post.R
 \name{lmn.post}
 \alias{lmn.post}
-\title{Parameters of the Posterior Conditional MNIW Distribution}
+\title{Parameters of the posterior conditional MNIW distribution.}
 \usage{
 lmn.post(suff, Y, X, V, acf, prior = NULL, noSigma = FALSE,
   calc.prior = TRUE, debug = FALSE)
 }
 \arguments{
-\item{prior}{A list with elements \code{Lambda, Omega, Psi, nu} of the prior MNIW distribution.  Any omitted or null value defaults to zero  (see details).}
+\item{suff}{result of call to lmn.suff (optional, to avoid calculations).}
 
-\item{noSigma}{When \code{True} assumes that \code{Sigma = diag(q)}.}
+\item{Y}{an (n x q) matrix.}
 
-\item{calc.prior}{When \code{True} also returns the parameters of the prior distribution.}
+\item{X}{an (n x p) matrix. May also be passed as
+\itemize{
+   \item \code{X = 0}: in which case there is no intercept,
+   \item \code{X != 0}: in which case a scaled intercept X = X * matrix(1, n, 1)
+   is assumed.
+}}
+
+\item{V}{either: (1) an \code{n x n} full matrix, (2) an vector of length \code{n} such that \code{V = diag(V)}, (3) a scalar, such that \code{V = V * diag(n)}.}
+
+\item{acf}{a vector of length n such that V = toeplitz(acf).}
+
+\item{prior}{a list with elements \code{Lambda, Omega, Psi, nu} of the prior MNIW distribution.  Any omitted or null value defaults to zero  (see details).}
+
+\item{noSigma}{when \code{True} assumes that \code{Sigma = diag(q)}.}
+
+\item{calc.prior}{when \code{True} also returns the parameters of the prior distribution.}
 }
 \value{
-A list with elements \code{Lambda, Omega, Psi, nu}, the parameters of the MNIW posterior distribution.  Also returns element \code{prior}, a list with the same elements for the conjugate prior distribution.
-
-\code{(Beta, Sigma) | Y ~ MNIW(Lambda, Omega, Psi, nu)}.
-
-Also returns \code{prior}, a list of the parameters of the MNIW prior.
+A list with elements:
+\describe{
+\item{\code{Lambda}}{parameter of the MNIW prior.}
+\item{\code{Omega}}{parameter of the MNIW prior.}
+\item{\code{Psi}}{parameter of the MNIW prior.}
+\item{\code{nu}}{parameter of the MNIW prior.}
+\item{\code{prior}}{a list with the same elements for the conjugate prior distribution.}
+}
 }
 \description{
-Parameters of the Posterior Conditional MNIW Distribution
+Parameters of the posterior conditional MNIW distribution.
 }
 \details{
 The MNIW distribution is parametrized as
-\deqn{Sigma ~ iWish(Psi, nu), \qquad Beta ~ MNorm(Lambda, Omega^{-1}, Sigma.}
+\deqn{Sigma ~ iWish(Psi, nu),}
+\deqn{Beta ~ MNorm(Lambda, Omega^{-1}, Sigma).}
 As this is a posterior distribution, the parameter always define a proper MNIW distribution.  \code{nu = NA} and \code{Omega = NA} respectively mean that \code{Beta = 0} or \code{Sigma = diag(q)} is known.
+The joint distribution of Beta and Sigma is
+\deqn{(Beta, Sigma) | Y ~ MNIW(Lambda, Omega, Psi, nu).}
+}
+\examples{
+## Data
+Y = matrix(rnorm(100),50,2)
+
+## Exponentially decaying acf example
+X = matrix(1,50,1)
+V = exp(-seq(1:nrow(Y)))
+acf = 0.5*exp(-seq(1:nrow(Y)))
+suff = lmn.suff(Y, X, V=V)
+lmn.post(suff, Y, X, V, acf)
+
 }

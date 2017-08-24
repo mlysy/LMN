@@ -2,18 +2,18 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 .DurbinLevinsonXZ <- function(X, acf) {
-    .Call('_LMN_DurbinLevinson_XZ', PACKAGE = 'LMN', X, acf)
+    .Call(`_LMN_DurbinLevinson_XZ`, X, acf)
 }
 
 .DurbinLevinsonZX <- function(Z, acf) {
-    .Call('_LMN_DurbinLevinson_ZX', PACKAGE = 'LMN', Z, acf)
+    .Call(`_LMN_DurbinLevinson_ZX`, Z, acf)
 }
 
 .DurbinLevinsonEigen <- function(X, Y, acf, calcMode = 1L) {
-    .Call('_LMN_DurbinLevinson_Eigen', PACKAGE = 'LMN', X, Y, acf, calcMode)
+    .Call(`_LMN_DurbinLevinson_Eigen`, X, Y, acf, calcMode)
 }
 
 .DurbinLevinsonBase <- function(X, Y, acf, calcMode = 1L) {
-    .Call('_LMN_DurbinLevinson_Base', PACKAGE = 'LMN', X, Y, acf, calcMode)
+    .Call(`_LMN_DurbinLevinson_Base`, X, Y, acf, calcMode)
 }
 
