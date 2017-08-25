@@ -1,4 +1,4 @@
-#' Log-likelihood function for LMN models
+#' Log-likelihood function for LMN models.
 #'
 #' @param Beta an (p x q) matrix (see details).
 #' @param Sigma an (q x q) matrix (see details).

@@ -2,7 +2,7 @@
 % Please edit documentation in R/lmn-loglik.R
 \name{lmn.loglik}
 \alias{lmn.loglik}
-\title{Log-likelihood function for LMN models}
+\title{Log-likelihood function for LMN models.}
 \usage{
 lmn.loglik(Beta, Sigma, suff, Y, X, V, acf)
 }
@@ -30,7 +30,7 @@ lmn.loglik(Beta, Sigma, suff, Y, X, V, acf)
 The calculated log-likelihood.
 }
 \description{
-Log-likelihood function for LMN models
+Log-likelihood function for LMN models.
 }
 \details{
 The model is defined as
