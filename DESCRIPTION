@@ -10,7 +10,8 @@ License: GPL-3
 Imports:
     Rcpp (>= 0.12.4.4)
 LinkingTo: Rcpp, RcppEigen, SuperGauss
-RoxygenNote: 6.0.1
+Encoding: UTF-8
+RoxygenNote: 6.1.0
 Suggests: testthat, numDeriv,
     knitr,
     rmarkdown
