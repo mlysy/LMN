@@ -2,19 +2,48 @@
 % Please edit documentation in R/lmn-marg.R
 \name{lmn.marg}
 \alias{lmn.marg}
-\title{Marginal Log-Posterior for the LMN Model}
+\title{Marginal log-posterior for the LMN model.}
 \usage{
 lmn.marg(suff, Y, X, V, acf, post, prior, noSigma, debug = FALSE)
 }
 \arguments{
-\item{suff}{The sufficient statistics to be combined with the MNIW conjugate prior.}
+\item{suff}{result of call to lmn.suff (optional, to avoid calculations).}
 
-\item{post}{The parameters of the conditional MNIW distribution.  If missing will use \code{prior} and \code{noSigma} to calculate.}
+\item{Y}{an (n x q) matrix.}
 
-\item{prior}{The parameters of the prior.  These are required for correct normalization.}
+\item{X}{an (n x p) matrix. May also be passed as
+\itemize{
+   \item \code{X = 0}: in which case there is no intercept,
+   \item \code{X != 0}: in which case a scaled intercept X = X * matrix(1, n, 1)
+   is assumed.
+}}
 
-\item{noSigma}{Used to calculate \code{post} if it is missing.}
+\item{V}{either: (1) an \code{n x n} full matrix, (2) an vector of length \code{n} such that \code{V = diag(V)}, (3) a scalar, such that \code{V = V * diag(n)}.}
+
+\item{acf}{a vector of length n such that V = toeplitz(acf).}
+
+\item{post}{the parameters of the conditional MNIW distribution.  If missing will use \code{prior} and \code{noSigma} to calculate.}
+
+\item{prior}{the parameters of the prior.  These are required for correct normalization.}
+
+\item{noSigma}{used to calculate \code{post} if it is missing.}
+}
+\value{
+The calculated marginal log-posterior.
 }
 \description{
-Marginal Log-Posterior for the LMN Model
+Marginal log-posterior for the LMN model.
+}
+\examples{
+## Data
+Y = matrix(rnorm(100),50,2)
+
+## Exponentially decaying acf example
+X = matrix(1,50,1)
+V = exp(-seq(1:nrow(Y)))
+acf = 0.5*exp(-seq(1:nrow(Y)))
+suff = lmn.suff(Y, X, V=V)
+post = lmn.post(suff, Y, X, V, acf)
+lmn.marg(suff, Y, X, V, acf, post, debug = FALSE)
+
 }

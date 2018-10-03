@@ -2,24 +2,51 @@
 % Please edit documentation in R/lmn-prof.R
 \name{lmn.prof}
 \alias{lmn.prof}
-\title{Profile Log-Likelihood for the LMN Model}
+\title{Profile log-likelihood for the LMN model.}
 \usage{
 lmn.prof(suff, Y, X, V, acf, noSigma = FALSE)
 }
 \arguments{
-\item{suff}{result of call to lmn.suff (i.e. avoid calculations here)}
+\item{suff}{result of call to lmn.suff (optional, to avoid calculations).}
 
-\item{noSigma}{logical. if true assumes that \code{Sigma = diag(ncol(Y))}.}
+\item{Y}{an (n x q) matrix.}
+
+\item{X}{an (n x p) matrix. May also be passed as
+\itemize{
+   \item \code{X = 0}: in which case there is no intercept,
+   \item \code{X != 0}: in which case a scaled intercept X = X * matrix(1, n, 1)
+   is assumed.
+}}
+
+\item{V}{either: (1) an \code{n x n} full matrix, (2) an vector of length \code{n} such that \code{V = diag(V)}, (3) a scalar, such that \code{V = V * diag(n)}.}
+
+\item{acf}{a vector of length n such that V = toeplitz(acf).}
+
+\item{noSigma}{logical. If true assumes that \code{Sigma = diag(ncol(Y))}.}
 }
 \value{
-the calculated profile log-likelihood.
+The calculated profile log-likelihood.
 }
 \description{
-Profile Log-Likelihood for the LMN Model
+Profile log-likelihood for the LMN model.
 }
 \details{
 The model is defined as
 \deqn{Y ~ MNorm(X*Beta, V, Sigma),}
 where MNorm is the Matrix-Normal distribution, i.e.
 \deqn{vec(Y) ~ N( vec(X*Beta), Sigma \otimes V ).}
+}
+\examples{
+## Data
+Y = matrix(rnorm(100),50,2)
+
+## example where lmn.suff if first called
+X = matrix(1,50,1)
+V = exp(-seq(1:nrow(Y)))
+suff = lmn.suff(Y, X, V=V)
+lmn.prof(suff, Y, X, V)
+
+## lmn.prof call without suff gives same result (calculates suff internally)
+lmn.prof(Y=Y, X=X, V=V)
+
 }
