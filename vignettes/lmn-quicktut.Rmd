@@ -1,6 +1,6 @@
 ---
 title: "**`LMN`**: Marginal Inference for Linear Models with Nuisance Parameters"
-author: "Bryan Yates, Martin Lysy"
+author: "Martin Lysy, Bryan Yates"
 date: "`r Sys.Date()`"
 output:
   html_vignette:
