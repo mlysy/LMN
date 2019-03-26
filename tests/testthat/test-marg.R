@@ -1,15 +1,14 @@
-library(LMN)
+## library(LMN)
 source("lmn-testfunctions.R")
-context("Marginal")
+context("Marginal/Conditional")
 
 test_that("Lik * Prior = Marg * Cond.", {
   calc.diff <- FALSE
   case.par <- expand.grid(p = c(-1, 0, 1, 3, 4), q = c(1, 3, 5),
-                          type = c("scalar", "diag", "acf", "V"),
+                          Vtype = c("scalar", "diag", "acf", "full"),
                           noSigma = c(TRUE, FALSE),
                           noOmega = c(TRUE, FALSE),
                           noPsi = c(TRUE, FALSE),
-                          preSuff = c(TRUE, FALSE),
                           noPrior = c(TRUE, FALSE))
   # remove noBeta && (noSigma || noOmega)
   case.par <- case.par[with(case.par, {p != 0 | (!noSigma & !noOmega)}),]
@@ -27,7 +26,7 @@ test_that("Lik * Prior = Marg * Cond.", {
     p <- cp$p
     q <- cp$q
     noBeta <- p == 0
-    type <- as.character(cp$type)
+    Vtype <- as.character(cp$Vtype)
     noSigma <- cp$noSigma
     noOmega <- cp$noOmega
     noPsi <- cp$noPsi
@@ -48,10 +47,10 @@ test_that("Lik * Prior = Marg * Cond.", {
     }
     acf <- exp(-2*(1:n)/n)
     diagV <- rexp(n)
-    if(type == "scalar") {
+    if(Vtype == "scalar") {
       VV <- acf[1]
       VR <- diag(rep(acf[1], n))
-    } else if(type == "diag") {
+    } else if(Vtype == "diag") {
       VV <- diagV
       VR <- diag(diagV)
     } else {
@@ -95,8 +94,8 @@ test_that("Lik * Prior = Marg * Cond.", {
     #if(noPrior) {
     #  lpi <- 0
     #} else {
-      lpi <- lMNIW(X = Beta, V = Sigma,
-                   prior$Lambda, prior$Omega, prior$Psi, prior$nu)
+    lpi <- lMNIW(X = Beta, V = Sigma,
+                 prior$Lambda, prior$Omega, prior$Psi, prior$nu)
     #}
     # loglik
     if(noBeta) {
@@ -106,38 +105,22 @@ test_that("Lik * Prior = Marg * Cond.", {
     }
     ll <- lMnorm(Y, Mu, VR, Sigma)
     # logpost & logmarg
-    if(type == "acf") {
-      Data <- list(Y = Y, X = XX, acf = acf)
+    if(Vtype == "acf") {
+      Data <- list(Y = Y, X = XX, V = acf, Vtype = Vtype)
     } else {
-      Data <- list(Y = Y, X = XX, V = VV)
+      Data <- list(Y = Y, X = XX, V = VV, Vtype = Vtype)
     }
     suff <- do.call(lmn.suff, args = Data)
     if(noPrior) {
-      if(preSuff) {
-        post <- lmn.post(suff, noSigma = noSigma)
-        # get prior from post
-        lpm <- lmn.marg(suff, post = post)
-      } else {
-        post <- do.call(lmn.post,
-                        args = c(Data, list(noSigma = noSigma)))
-        # explicitly pass prior
-        lpm <- do.call(lmn.marg,
-                       args = c(Data, list(noSigma = noSigma,
-                         prior = NULL)))
-      }
+      prior <- lmn.prior(p = suff$p, q = suff$q, nu = ifelse(noSigma, NA, 0))
     } else {
-      # infer noSigma from prior
-      if(preSuff) {
-        post <- lmn.post(suff, prior = prior)
-        # get prior from post
-        lpm <- lmn.marg(suff, post = post)
-      } else {
-        post <- do.call(lmn.post, args = c(Data, list(prior = prior)))
-        # explicitly pass prior
-        lpm <- do.call(lmn.marg,
-                       args = c(Data, list(post = post, prior = prior)))
-      }
+      prior <- do.call(lmn.prior, c(list(p = suff$p, q = suff$q), prior))
     }
+    ## if(noPrior) prior <- lmn.prior(suff, nu = noSigma)
+    ## prior2 <- lmn.prior(suff, nu = noSigma)
+    ## post2 <- lmn.post(suff, prior = prior2)
+    post <- lmn.post(suff, prior = prior)
+    lpm <- lmn.marg(suff, prior = prior, post = post)
     lpc <- lMNIW(Beta, Sigma,
                  post$Lambda, post$Omega, post$Psi, post$nu)
     # smallest of relative and absolute error

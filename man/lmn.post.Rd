@@ -2,63 +2,53 @@
 % Please edit documentation in R/lmn-post.R
 \name{lmn.post}
 \alias{lmn.post}
-\title{Parameters of the posterior conditional MNIW distribution.}
+\title{Parameters of the posterior conditional distribution of an LMN model.}
 \usage{
-lmn.post(suff, Y, X, V, acf, prior = NULL, noSigma = FALSE,
-  calc.prior = TRUE, debug = FALSE)
+lmn.post(suff, prior)
 }
 \arguments{
-\item{suff}{result of call to lmn.suff (optional, to avoid calculations).}
+\item{suff}{An object of class \code{lmn_suff} (see \code{\link{lmn.suff}}).}
 
-\item{Y}{an (n x q) matrix.}
-
-\item{X}{an (n x p) matrix. May also be passed as
-\itemize{
-   \item \code{X = 0}: in which case there is no intercept,
-   \item \code{X != 0}: in which case a scaled intercept X = X * matrix(1, n, 1)
-   is assumed.
-}}
-
-\item{V}{either: (1) an \code{n x n} full matrix, (2) an vector of length \code{n} such that \code{V = diag(V)}, (3) a scalar, such that \code{V = V * diag(n)}.}
-
-\item{acf}{a vector of length n such that V = toeplitz(acf).}
-
-\item{prior}{a list with elements \code{Lambda, Omega, Psi, nu} of the prior MNIW distribution.  Any omitted or null value defaults to zero  (see details).}
-
-\item{noSigma}{when \code{True} assumes that \code{Sigma = diag(q)}.}
-
-\item{calc.prior}{when \code{True} also returns the parameters of the prior distribution.}
+\item{prior}{A list with elements \code{Lambda}, \code{Omega}, \code{Psi}, \code{nu} as returned by \code{\link{lmn.prior}}.}
 }
 \value{
-A list with elements:
-\describe{
-\item{\code{Lambda}}{parameter of the MNIW prior.}
-\item{\code{Omega}}{parameter of the MNIW prior.}
-\item{\code{Psi}}{parameter of the MNIW prior.}
-\item{\code{nu}}{parameter of the MNIW prior.}
-\item{\code{prior}}{a list with the same elements for the conjugate prior distribution.}
-}
+A list with elements named as in \code{prior} specifying the parameters of the posterior MNIW distribution.  Elements \code{Omega = NA} and \code{nu = NA} specify that parameters \code{Beta = 0} and \code{Sigma = diag(q)}, respectively, are known and not to be estimated.
 }
 \description{
-Parameters of the posterior conditional MNIW distribution.
+Calculates the parameters of the LMN model's Matrix-Normal Inverse-Wishart (MNIW) conjugate posterior distribution  (see \strong{Details}).
 }
 \details{
-The MNIW distribution is parametrized as
-\deqn{Sigma ~ iWish(Psi, nu),}
-\deqn{Beta ~ MNorm(Lambda, Omega^{-1}, Sigma).}
-As this is a posterior distribution, the parameter always define a proper MNIW distribution.  \code{nu = NA} and \code{Omega = NA} respectively mean that \code{Beta = 0} or \code{Sigma = diag(q)} is known.
-The joint distribution of Beta and Sigma is
-\deqn{(Beta, Sigma) | Y ~ MNIW(Lambda, Omega, Psi, nu).}
+The Matrix-Normal Inverse-Wishart (MNIW) distribution \eqn{(\boldsymbol{B}, \boldsymbol{\Sigma}) \sim \textrm{MNIW}(\boldsymbol{\Lambda}, \boldsymbol{\Omega}, \boldsymbol{\Psi}, \nu)}{(B, \Sigma) ~ MNIW(\Lambda, \Omega, \Psi, \nu)} on random matrices \eqn{\boldsymbol{X}_{p \times q}}{X_(p x q)} and symmetric positive-definite \eqn{\boldsymbol{\Sigma}_{q \times q}}{\Sigma_(q x q)} is defined as
+\deqn{
+\begin{array}{rcl}
+\boldsymbol{\Sigma} & \sim & \textrm{Inverse-Wishart}(\boldsymbol{\Psi}, \nu) \\
+\boldsymbol{B} \mid \boldsymbol{\Sigma} & \sim & \textrm{Matrix-Normal}(\boldsymbol{\Lambda}, \boldsymbol{\Omega}^{-1}, \boldsymbol{\Sigma}),
+\end{array}
+}{
+\Sigma ~ Inverse-Wishart(\Psi, \nu)
+}
+\deqn{
+\vspace{-1em}
+}{
+B | \Sigma ~ Matrix-Normal(\Lambda, \Omega^{-1}, \Sigma),
+}
+where the Matrix-Normal distribution is defined in \code{\link{lmn.suff}}.
+
+The posterior MNIW distribution is required to be a proper distribution, but the prior is not.  For example, \code{prior = NULL} corresponds to the noninformative prior
+\deqn{
+\pi(B, \boldsymbol{\Sigma}) \sim |\boldsymbol{Sigma}|^{-(q+1)/2}.
+}{
+\pi(B, \Sigma) ~ |\Sigma|^{-(q+1)/2}.
+}
 }
 \examples{
-## Data
-Y = matrix(rnorm(100),50,2)
+# generate data
+n <- 50
+q <- 2
+p <- 3
+Y <- matrix(rnorm(n*q),n,q) # response matrix
+X <- matrix(rnorm(n*p),n,p) # covariate matrix
+V <- .5 * exp(-(1:n)/n) # Toeplitz variance specification
 
-## Exponentially decaying acf example
-X = matrix(1,50,1)
-V = exp(-seq(1:nrow(Y)))
-acf = 0.5*exp(-seq(1:nrow(Y)))
-suff = lmn.suff(Y, X, V=V)
-lmn.post(suff, Y, X, V, acf)
-
+suff <- lmn.suff(Y = Y, X = X, V = V, Vtype = "acf") # sufficient statistics
 }

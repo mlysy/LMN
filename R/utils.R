@@ -2,7 +2,7 @@
 # @param V A square matrix.
 # @return The log-determinant \code{log(det(V))}.
 ldet <- function(V) {
-  determinant(V, log = TRUE)$mod[1]
+  determinant(V, logarithm = TRUE)$mod[1]
 }
 
 # Log of Multi-Gamma Function
@@ -60,4 +60,22 @@ toeplitz2 <- function(col, row, debug = FALSE) {
     if(is.null(Psi) || all(Psi == 0)) Psi <- matrix(0,q,q)
   }
   list(Lambda = Lambda, Omega = Omega, Psi = Psi, nu = nu)
+}
+
+# Solve method for variance matrices.
+#
+# @param V Variance matrix
+# @param x Optional vector or matrix for which to solve system of equations.  If missing calculates inverse matrix.
+# @param ldV Optionally compute log determinant as well.
+# @return Matrix solving system of equations and optionally the log-determinant.
+# @details This function is faster and more stable than \code{solve} when \code{V} is known to be positive-definite.
+solveV <- function(V, x, ldV = FALSE) {
+  C <- chol(V)
+  if(missing(x)) x <- diag(nrow(V))
+  ans <- backsolve(r = C, x = backsolve(r = C, x = x, transpose = TRUE))
+  if(ldV) {
+    ldV <- 2 * sum(log(diag(C)))
+    ans <- list(y = ans, ldV = ldV)
+  }
+  ans
 }

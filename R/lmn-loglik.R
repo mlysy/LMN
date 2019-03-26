@@ -1,42 +1,14 @@
-#' Log-likelihood function for LMN models.
+#' Loglikelihood function for LMN models.
 #'
-#' @param Beta an (p x q) matrix (see details).
-#' @param Sigma an (q x q) matrix (see details).
-#' @param suff result of call to lmn.suff (optional, to avoid calculations).
-#' @param Y an (n x q) matrix.
-#' @param X an (n x p) matrix. May also be passed as
-#' \itemize{
-#'    \item \code{X = 0}: in which case there is no intercept,
-#'    \item \code{X != 0}: in which case a scaled intercept X = X * matrix(1, n, 1)
-#'    is assumed.
-#' }
-#' @param V either: (1) an \code{n x n} full matrix, (2) an vector of length \code{n} such that \code{V = diag(V)}, (3) a scalar, such that \code{V = V * diag(n)}.
-#' @param acf a vector of length n such that V = toeplitz(acf).
-#' 
-#' @details The model is defined as
-#' \deqn{Y ~ MNorm(X*Beta, V, Sigma),}
-#' where MNorm is the Matrix-Normal distribution, i.e.
-#' \deqn{vec(Y) ~ N( vec(X*Beta), Sigma \otimes V ).}
-#' 
-#' @return The calculated log-likelihood.
-#' 
-#' @examples
-#' ## Data
-#' Y = matrix(rnorm(100),50,2)
-#' 
-#' ## Scalar V example
-#' X = matrix(1,50,1)
-#' q = ncol(X)
-#' V = 0.5
-#' suff = lmn.suff(Y, X, V=V)
-#' Beta = matrix(c(1,0.5),1,2)
-#' Sigma = diag(2)
-#' lmn.loglik(Beta, Sigma, suff, Y, X, V)
-#' 
+#' @param Beta A \code{p x q} matrix of regression coefficients (see \code{\link{lmn.suff}}).
+#' @param Sigma A \code{q x q} matrix of error variances (see \code{\link{lmn.suff}}).
+#' @template param-suff
+#' @return Scalar -- the value of the loglikelihood.
+#' @example examples/lmn-loglik.R
 #' @export
-lmn.loglik <- function(Beta, Sigma, suff, Y, X, V, acf) {
-  if(missing(suff)) {
-    suff <- lmn.suff(Y = Y, X = X, V = V, acf = acf)
+lmn.loglik <- function(Beta, Sigma, suff) {
+  if(class(suff) != "lmn_suff") {
+    stop("suff must be an object of class 'lmn_suff'.")
   }
   # get sufficient statistics for likelihood evaluation
   n <- suff$n
@@ -51,5 +23,5 @@ lmn.loglik <- function(Beta, Sigma, suff, Y, X, V, acf) {
     Z <- Beta-Beta.hat
     S <- S + crossprod(Z, T %*% Z)
   }
-  -0.5 * (sum(diag(solve(Sigma,S))) + q*ldV + n*ldet(Sigma) + n*q * log(2*pi))
+  -0.5 * (sum(diag(solveV(Sigma,S))) + q*ldV + n*ldet(Sigma) + n*q * log(2*pi))
 }

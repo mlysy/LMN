@@ -1,40 +1,16 @@
-#' Profile log-likelihood for the LMN model.
+#' Profile loglikelihood for the LMN model.
 #'
-#' @details The model is defined as
-#' \deqn{Y ~ MNorm(X*Beta, V, Sigma),}
-#' where MNorm is the Matrix-Normal distribution, i.e.
-#' \deqn{vec(Y) ~ N( vec(X*Beta), Sigma \otimes V ).}
-#' @param suff result of call to lmn.suff (optional, to avoid calculations).
-#' @param Y an (n x q) matrix.
-#' @param X an (n x p) matrix. May also be passed as
-#' \itemize{
-#'    \item \code{X = 0}: in which case there is no intercept,
-#'    \item \code{X != 0}: in which case a scaled intercept X = X * matrix(1, n, 1)
-#'    is assumed.
-#' }
-#' @param V either: (1) an \code{n x n} full matrix, (2) an vector of length \code{n} such that \code{V = diag(V)}, (3) a scalar, such that \code{V = V * diag(n)}.
-#' @param acf a vector of length n such that V = toeplitz(acf).
-#' @param noSigma logical. If true assumes that \code{Sigma = diag(ncol(Y))}.
-#' @return The calculated profile log-likelihood.
-#' 
-#' @examples
-#' ## Data
-#' Y = matrix(rnorm(100),50,2)
-#' 
-#' ## example where lmn.suff if first called
-#' X = matrix(1,50,1)
-#' V = exp(-seq(1:nrow(Y)))
-#' suff = lmn.suff(Y, X, V=V)
-#' lmn.prof(suff, Y, X, V)
-#' 
-#' ## lmn.prof call without suff gives same result (calculates suff internally)
-#' lmn.prof(Y=Y, X=X, V=V)
-#' 
+#' Calculate the loglikelihood of the LMN model defined in \code{\link{lmn.suff}} at the MLE \code{Beta = Beta.hat} and \code{Sigma = Sigma.hat}.
+#'
+#' @template param-suff
+#' @template param-noSigma
+#'
+#' @return Scalar -- the calculated value of the profile loglikelihood.
+#' @example examples/lmn-prof.R
 #' @export
-lmn.prof <- function(suff, Y, X, V, acf, noSigma = FALSE) {
-  # sufficient statistics
-  if(missing(suff)) {
-    suff <- lmn.suff(Y = Y, X = X, V = V, acf = acf)
+lmn.prof <- function(suff, noSigma = FALSE) {
+  if(class(suff) != "lmn_suff") {
+    stop("suff must be an object of class 'lmn_suff'.")
   }
   n <- suff$n
   S <- suff$S

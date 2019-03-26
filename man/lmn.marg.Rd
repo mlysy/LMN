@@ -4,46 +4,33 @@
 \alias{lmn.marg}
 \title{Marginal log-posterior for the LMN model.}
 \usage{
-lmn.marg(suff, Y, X, V, acf, post, prior, noSigma, debug = FALSE)
+lmn.marg(suff, prior, post)
 }
 \arguments{
-\item{suff}{result of call to lmn.suff (optional, to avoid calculations).}
+\item{suff}{An object of class \code{lmn_suff} (see \code{\link{lmn.suff}}).}
 
-\item{Y}{an (n x q) matrix.}
+\item{prior}{A list with elements \code{Lambda}, \code{Omega}, \code{Psi}, \code{nu} corresponding to the parameters of the prior MNIW distribution.  See \code{\link{lmn.prior}}.}
 
-\item{X}{an (n x p) matrix. May also be passed as
-\itemize{
-   \item \code{X = 0}: in which case there is no intercept,
-   \item \code{X != 0}: in which case a scaled intercept X = X * matrix(1, n, 1)
-   is assumed.
-}}
-
-\item{V}{either: (1) an \code{n x n} full matrix, (2) an vector of length \code{n} such that \code{V = diag(V)}, (3) a scalar, such that \code{V = V * diag(n)}.}
-
-\item{acf}{a vector of length n such that V = toeplitz(acf).}
-
-\item{post}{the parameters of the conditional MNIW distribution.  If missing will use \code{prior} and \code{noSigma} to calculate.}
-
-\item{prior}{the parameters of the prior.  These are required for correct normalization.}
-
-\item{noSigma}{used to calculate \code{post} if it is missing.}
+\item{post}{A list with elements \code{Lambda}, \code{Omega}, \code{Psi}, \code{nu} corresponding to the parameters of the posterior MNIW distribution.  See \code{\link{lmn.post}}.}
 }
 \value{
-The calculated marginal log-posterior.
+The scalar value of the marginal log-posterior.
 }
 \description{
 Marginal log-posterior for the LMN model.
 }
 \examples{
-## Data
-Y = matrix(rnorm(100),50,2)
+# generate data
+n <- 50
+q <- 2
+p <- 3
+Y <- matrix(rnorm(n*q),n,q) # response matrix
+X <- matrix(rnorm(n*p),n,p) # covariate matrix
+V <- .5 * exp(-(1:n)/n) # Toeplitz variance specification
 
-## Exponentially decaying acf example
-X = matrix(1,50,1)
-V = exp(-seq(1:nrow(Y)))
-acf = 0.5*exp(-seq(1:nrow(Y)))
-suff = lmn.suff(Y, X, V=V)
-post = lmn.post(suff, Y, X, V, acf)
-lmn.marg(suff, Y, X, V, acf, post, debug = FALSE)
-
+suff <- lmn.suff(Y = Y, X = X, V = V, Vtype = "acf") # sufficient statistics
+# default noninformative prior pi(Beta, Sigma) ~ |Sigma|^(-(q+1)/2)
+prior <- lmn.prior(p = suff$p, q = suff$q)
+post <- lmn.post(suff, prior = prior) # posterior MNIW parameters
+lmn.marg(suff, prior = prior, post = post)
 }

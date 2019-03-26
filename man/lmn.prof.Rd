@@ -2,51 +2,33 @@
 % Please edit documentation in R/lmn-prof.R
 \name{lmn.prof}
 \alias{lmn.prof}
-\title{Profile log-likelihood for the LMN model.}
+\title{Profile loglikelihood for the LMN model.}
 \usage{
-lmn.prof(suff, Y, X, V, acf, noSigma = FALSE)
+lmn.prof(suff, noSigma = FALSE)
 }
 \arguments{
-\item{suff}{result of call to lmn.suff (optional, to avoid calculations).}
+\item{suff}{An object of class \code{lmn_suff} (see \code{\link{lmn.suff}}).}
 
-\item{Y}{an (n x q) matrix.}
-
-\item{X}{an (n x p) matrix. May also be passed as
-\itemize{
-   \item \code{X = 0}: in which case there is no intercept,
-   \item \code{X != 0}: in which case a scaled intercept X = X * matrix(1, n, 1)
-   is assumed.
-}}
-
-\item{V}{either: (1) an \code{n x n} full matrix, (2) an vector of length \code{n} such that \code{V = diag(V)}, (3) a scalar, such that \code{V = V * diag(n)}.}
-
-\item{acf}{a vector of length n such that V = toeplitz(acf).}
-
-\item{noSigma}{logical. If true assumes that \code{Sigma = diag(ncol(Y))}.}
+\item{noSigma}{Logical. If \code{TRUE} assumes that \code{Sigma = diag(ncol(Y))} is known and therefore not estimated.}
 }
 \value{
-The calculated profile log-likelihood.
+Scalar -- the calculated value of the profile loglikelihood.
 }
 \description{
-Profile log-likelihood for the LMN model.
-}
-\details{
-The model is defined as
-\deqn{Y ~ MNorm(X*Beta, V, Sigma),}
-where MNorm is the Matrix-Normal distribution, i.e.
-\deqn{vec(Y) ~ N( vec(X*Beta), Sigma \otimes V ).}
+Calculate the loglikelihood of the LMN model defined in \code{\link{lmn.suff}} at the MLE \code{Beta = Beta.hat} and \code{Sigma = Sigma.hat}.
 }
 \examples{
-## Data
-Y = matrix(rnorm(100),50,2)
+# generate data
+n <- 50
+q <- 2
+Y <- matrix(rnorm(n*q),n,q) # response matrix
+X <- matrix(1,n,1) # covariate matrix
+V <- exp(-(1:n)/n) # diagonal variance specification
+suff <- lmn.suff(Y, X = X, V = V, Vtype = "diag") # sufficient statistics
 
-## example where lmn.suff if first called
-X = matrix(1,50,1)
-V = exp(-seq(1:nrow(Y)))
-suff = lmn.suff(Y, X, V=V)
-lmn.prof(suff, Y, X, V)
+# profile loglikelihood
+lmn.prof(suff)
 
-## lmn.prof call without suff gives same result (calculates suff internally)
-lmn.prof(Y=Y, X=X, V=V)
-
+# check that it's the same as loglikelihood at MLE
+lmn.loglik(Beta = suff$Beta.hat, Sigma = suff$S/suff$n, suff = suff)
 }

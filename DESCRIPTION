@@ -8,11 +8,9 @@ Maintainer: Martin Lysy <mlysy@uwaterloo.ca>
 Description: Efficient Frequentist profiling and Bayesian marginalization of parameters for which the conditional likelihood is that of a multivariate linear regression model.  While optimal inter-observation error correlations are support, optimized calculations are provided for independent-heteroskedastic and stationary dependence structures.
 License: GPL-3
 Imports:
-    Rcpp (>= 0.12.4.4)
-LinkingTo: Rcpp, RcppEigen, SuperGauss
+    Rcpp (>= 0.12.4.4), SuperGauss, stats
+LinkingTo: Rcpp, RcppEigen
 Encoding: UTF-8
-RoxygenNote: 6.1.0
-Suggests: testthat, numDeriv,
-    knitr,
-    rmarkdown
+RoxygenNote: 6.1.1
+Suggests: testthat, numDeriv, knitr, rmarkdown
 VignetteBuilder: knitr

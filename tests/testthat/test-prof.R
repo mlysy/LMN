@@ -1,14 +1,13 @@
 #--- test profile likelihood ----------------------------------------------------
-library(LMN)
+## library(LMN)
 source("lmn-testfunctions.R")
-context("Profile")
+context("Profile Likelihood")
 
 test_that("Profile likelihood equals likelihood at MLE.", {
   calc.diff <- FALSE
   case.par <- expand.grid(p = c(-1, 0, 1, 3, 5), q = c(1, 3, 5),
-                          type = c("scalar", "diag", "acf", "V"),
-                          noSigma = c(TRUE, FALSE),
-                          preSuff = c(TRUE, FALSE))
+                          Vtype = c("scalar", "diag", "acf", "full"),
+                          noSigma = c(TRUE, FALSE))
   # remove noBeta && noSigma
   case.par <- case.par[with(case.par, {p != 0 | !noSigma}),]
   ncases <- nrow(case.par)
@@ -22,7 +21,7 @@ test_that("Profile likelihood equals likelihood at MLE.", {
     p <- cp$p
     q <- cp$q
     noBeta <- p == 0
-    type <- as.character(cp$type)
+    Vtype <- as.character(cp$Vtype)
     noSigma <- cp$noSigma
     preSuff <- cp$preSuff
     # set up data
@@ -39,10 +38,10 @@ test_that("Profile likelihood equals likelihood at MLE.", {
     }
     acf <- exp(-2*(1:n)/n)
     diagV <- rexp(n)
-    if(type == "scalar") {
+    if(Vtype == "scalar") {
       VV <- acf[1]
       VR <- diag(rep(acf[1], n))
-    } else if(type == "diag") {
+    } else if(Vtype == "diag") {
       VV <- diagV
       VR <- diag(diagV)
     } else {
@@ -50,10 +49,10 @@ test_that("Profile likelihood equals likelihood at MLE.", {
       VR <- VV
     }
     # get sufficient statistics
-    if(type == "acf") {
-      suff <- lmn.suff(Y = Y, X = XX, acf = acf)
+    if(Vtype == "acf") {
+      suff <- lmn.suff(Y = Y, X = XX, V = acf, Vtype = Vtype)
     } else {
-      suff <- lmn.suff(Y = Y, X = XX, V = VV)
+      suff <- lmn.suff(Y = Y, X = XX, V = VV, Vtype = Vtype)
     }
     # check profile likelihood
     # calculate long hand
@@ -71,15 +70,7 @@ test_that("Profile likelihood equals likelihood at MLE.", {
     }
     llR <- lMnorm(X = Y, Mu = Mu, RowV = VR, ColV = Sigma)
     # calculate with LMN
-    if(preSuff) {
-      llp <- lmn.prof(suff = suff, noSigma = noSigma)
-    } else {
-      if(type == "acf") {
-        llp <- lmn.prof(Y = Y, X = XX, acf = acf, noSigma = noSigma)
-      } else {
-        llp <- lmn.prof(Y = Y, X = XX, V = VV, noSigma = noSigma)
-      }
-    }
+    llp <- lmn.prof(suff = suff, noSigma = noSigma)
     if(calc.diff) {
       MaxDiff[ii] <- abs(llR - llp)
     } else {

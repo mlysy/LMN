@@ -1,13 +1,14 @@
-library(LMN)
+#--- test loglikelihood --------------------------------------------------------
+
+## library(LMN)
 source("lmn-testfunctions.R")
-context("LogLik")
+context("Loglikelihood")
 
 test_that("Loglikelihood with precomputations is same as long form.", {
   calc.diff <- FALSE
   case.par <- expand.grid(p = c(-1, 0, 1, 3, 5), q = c(1, 3, 5),
-                          type = c("scalar", "diag", "acf", "V"),
-                          noSigma = c(TRUE, FALSE),
-                          preSuff = c(TRUE, FALSE))
+                          Vtype = c("scalar", "diag", "acf", "full"),
+                          noSigma = c(TRUE, FALSE))
   ncases <- nrow(case.par)
   n <- 20
   if(calc.diff) {
@@ -19,7 +20,7 @@ test_that("Loglikelihood with precomputations is same as long form.", {
     p <- cp$p
     q <- cp$q
     noBeta <- p == 0
-    type <- as.character(cp$type)
+    Vtype <- as.character(cp$Vtype)
     noSigma <- cp$noSigma
     preSuff <- cp$preSuff
     # set up data
@@ -36,10 +37,10 @@ test_that("Loglikelihood with precomputations is same as long form.", {
     }
     acf <- exp(-2*(1:n)/n)
     diagV <- rexp(n)
-    if(type == "scalar") {
+    if(Vtype == "scalar") {
       VV <- acf[1]
       VR <- diag(rep(acf[1], n))
-    } else if(type == "diag") {
+    } else if(Vtype == "diag") {
       VV <- diagV
       VR <- diag(diagV)
     } else {
@@ -47,10 +48,11 @@ test_that("Loglikelihood with precomputations is same as long form.", {
       VR <- VV
     }
     # get sufficient statistics
-    if(type == "acf") {
-      suff <- lmn.suff(Y = Y, X = XX, acf = acf)
+    ## suff <- lmn.suff(Y = Y, X = XX, V = VV, Vtype = Vtype)
+    if(Vtype == "acf") {
+      suff <- lmn.suff(Y = Y, X = XX, V = acf, Vtype = Vtype)
     } else {
-      suff <- lmn.suff(Y = Y, X = XX, V = VV)
+      suff <- lmn.suff(Y = Y, X = XX, V = VV, Vtype = Vtype)
     }
     # full loglikelihood
     if(!noBeta) {
@@ -67,18 +69,8 @@ test_that("Loglikelihood with precomputations is same as long form.", {
     }
     llR <- lMnorm(X = Y, Mu = Mu, RowV = VR, ColV = Sigma)
     # calculate with LMN
-    if(preSuff) {
-      lls <- lmn.loglik(Beta = Beta, Sigma = Sigma,
-                        suff = suff)
-    } else {
-      if(type == "acf") {
-        lls <- lmn.loglik(Beta = Beta, Sigma = Sigma,
-                          Y = Y, X = XX, acf = acf)
-      } else {
-        lls <- lmn.loglik(Beta = Beta, Sigma = Sigma,
-                          Y = Y, X = XX, V = VV)
-      }
-    }
+    lls <- lmn.loglik(Beta = Beta, Sigma = Sigma,
+                      suff = suff)
     if(calc.diff) {
       MaxDiff[ii] <- abs(llR - lls)
     } else {

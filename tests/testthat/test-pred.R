@@ -1,12 +1,12 @@
 #--- test sufficient statistics -------------------------------------------------
-library(LMN)
+## library(LMN)
 source("lmn-testfunctions.R")
-context("Pred")
+context("Predictions")
 
 test_that("Prediction statistics are correctly computed.", {
   calc.diff <- FALSE
   case.par <- expand.grid(p = c(-1, 0, 1, 3, 5), q = c(1, 3, 5),
-                          type = c("scalar", "diag", "acf", "V"),
+                          Vtype = c("scalar", "diag", "acf", "full"),
                           noSigma = c(TRUE, FALSE),
                           npred = c(1, 5))
   ncases <- nrow(case.par)
@@ -19,7 +19,7 @@ test_that("Prediction statistics are correctly computed.", {
     cp <- case.par[ii,]
     p <- cp$p
     q <- cp$q
-    type <- as.character(cp$type)
+    Vtype <- as.character(cp$Vtype)
     noSigma <- cp$noSigma
     npred <- cp$npred
     # set up data
@@ -36,10 +36,10 @@ test_that("Prediction statistics are correctly computed.", {
     }
     acf <- exp(-2*(1:(n+npred))/(n+npred))
     diagV <- rexp(n+npred)
-    if(type == "scalar") {
+    if(Vtype == "scalar") {
       VV <- acf[1]
       VR <- diag(rep(acf[1], n+npred))
-    } else if(type == "diag") {
+    } else if(Vtype == "diag") {
       VV <- diagV
       VR <- diag(diagV)
     } else {
@@ -47,10 +47,10 @@ test_that("Prediction statistics are correctly computed.", {
       VV <- VR
     }
     # calculate with lmn.suff
-    if(type == "acf") {
-      suff <- lmn.suff(Y = Y, X = XX, acf = acf, npred = npred)
+    if(Vtype == "acf") {
+      suff <- lmn.suff(Y = Y, X = XX, V = acf, Vtype = Vtype, npred = npred)
     } else {
-      suff <- lmn.suff(Y = Y, X = XX, V = VV, npred = npred)
+      suff <- lmn.suff(Y = Y, X = XX, V = VV, Vtype = Vtype, npred = npred)
     }
     # calculate in R
     X <- XR[1:n,,drop = FALSE]

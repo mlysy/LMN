@@ -1,13 +1,13 @@
 #--- test MLE -------------------------------------------------------------------
-library(LMN)
-library(numDeriv)
+## library(LMN)
+require(numDeriv)
 source("lmn-testfunctions.R")
 context("MLE")
 
 test_that("Gradient = 0 at MLE.", {
   calc.grad <- FALSE
   case.par <- expand.grid(p = c(-1, 0, 1, 3, 5), q = c(1, 3, 5),
-                          type = c("scalar", "diag", "acf", "V"),
+                          Vtype = c("scalar", "diag", "acf", "full"),
                           noSigma = c(TRUE, FALSE))
   # remove noBeta && noSigma
   case.par <- case.par[with(case.par, {p != 0 | !noSigma}),]
@@ -22,7 +22,7 @@ test_that("Gradient = 0 at MLE.", {
     p <- cp$p
     q <- cp$q
     noBeta <- p == 0
-    type <- as.character(cp$type)
+    Vtype <- as.character(cp$Vtype)
     noSigma <- cp$noSigma
     # set up data
     Y <- rMnorm(n,q)
@@ -38,10 +38,10 @@ test_that("Gradient = 0 at MLE.", {
     }
     acf <- exp(-2*(1:n)/n)
     diagV <- rexp(n)
-    if(type == "scalar") {
+    if(Vtype == "scalar") {
       VV <- acf[1]
       VR <- diag(rep(acf[1], n))
-    } else if(type == "diag") {
+    } else if(Vtype == "diag") {
       VV <- diagV
       VR <- diag(diagV)
     } else {
@@ -49,10 +49,10 @@ test_that("Gradient = 0 at MLE.", {
       VR <- VV
     }
     # calculate with lmn.suff
-    if(type == "acf") {
-      suff <- lmn.suff(Y = Y, X = XX, acf = acf)
+    if(Vtype == "acf") {
+      suff <- lmn.suff(Y = Y, X = XX, V = acf, Vtype = Vtype)
     } else {
-      suff <- lmn.suff(Y = Y, X = XX, V = VV)
+      suff <- lmn.suff(Y = Y, X = XX, V = VV, Vtype = Vtype)
     }
     Beta.hat <- suff$Beta.hat
     Sigma.hat <- suff$S/suff$n

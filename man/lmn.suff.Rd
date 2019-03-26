@@ -4,78 +4,86 @@
 \alias{lmn.suff}
 \title{Calculate the sufficient statistics of an LMN model.}
 \usage{
-lmn.suff(Y, X, V, acf, npred = 0, debug = FALSE)
+lmn.suff(Y, X, V, Vtype, npred = 0)
 }
 \arguments{
-\item{Y}{an (n x q) matrix.}
+\item{Y}{An \code{n x q} matrix of responses.}
 
-\item{X}{an (n x p) matrix. May also be passed as
+\item{X}{An \code{N x p} matrix of covariates, where \code{N = n + npred} (see \strong{Details}). May also be passed as:
 \itemize{
-   \item \code{X = 0}: in which case there is no intercept,
-   \item \code{X != 0}: in which case a scaled intercept X = X * matrix(1, n, 1)
-   is assumed.
+  \item A scalar, in which case the one-column covariate matrix is \code{X = X * matrix(1, N, 1)}.
+  \item \code{X = 0}, in which case the mean of \code{Y} is known to be zero, i.e., no regression coefficients are estimated.
 }}
 
-\item{V}{either: (1) an \code{n x n} full matrix, (2) an vector of length \code{n} such that \code{V = diag(V)}, (3) a scalar, such that \code{V = V * diag(n)}.}
+\item{V, Vtype}{The between-observation variance specification.  Currently the following options are supported:
+\enumerate{
+  \item \code{Vtype = "full"}: \code{V} is an \code{N x N} symmetric positive-definite matrix.
+  \item \code{Vtype = "diag"}: \code{V} is a vector of length \code{N} such that \code{V = diag(V)}.
+  \item \code{Vtype = "scalar"}: \code{V} is a scalar such that \code{V = V * diag(N)}.
+  \item \code{Vtype = "acf"}: \code{V} is either a vector of length \code{N}, or an object of class \code{Toeplitz} such that \code{V = toeplitz(V)}.
+}
+For \code{V} specified as a matrix or scalar, \code{Vtype} is deduced automatically and need not be specified.}
 
-\item{acf}{a vector of length n such that V = toeplitz(acf).}
-
-\item{npred:}{an integer.  If nonzero, returns sufficient statistics to make predictions for \code{y | Y, Beta, Sigma} (see details).}
+\item{npred}{A nonnegative integer.  If positive, calculates sufficient statistics to make predictions for new responses. See \strong{Details}.}
 }
 \value{
-A list with the following elements:
-\describe{
-   \item{\code{Betahat = (t(X)V^{-1}X)^{-1}t(X)V^{-1}Y}}{}
-   \item{\code{T = t(X)V^{-1}X}}{}
-   \item{\code{S = t(Y-X*Betahat)V^{-1}(Y-X*Betahat)}}{}
-   \item{\code{ldV = log(|V|)}}{}
-   \item{\code{n = nrow(Y)}}{}
-   \item{\code{noBeta} and \code{noSigma}}{}
+An S3 object of type \code{lmn_suff}, consisting of a list with elements:
+\itemize{
+  \item \code{Beta.hat = (t(X)V^{-1}X)^{-1}t(X)V^{-1}Y}, or \code{NULL} if \code{X = 0}.
+  \item \code{T = t(X)V^{-1}X}.
+  \item \code{S = t(Y-X*Betahat)V^{-1}(Y-X*Betahat)}.
+  \item \code{ldV = log(|V|)}.
+  \item \code{n = nrow(Y)}.
+  \item \code{p = nrow(Beta)}, or \code{p = 0} if \code{X = 0}.
+  \item \code{q = ncol(Y)}.
 }
 In addition, when \code{npred > 0}:
-\describe{
-   \item{\code{Ap = t(w)V^{-1}Y}}{}
-   \item{\code{Xp = x - t(w)V^{-1}X}}{}
-   \item{\code{Vp = v - t(w)V^{-1}w}}{}
+\itemize{
+  \item \code{Ap = t(w)V^{-1}Y}.
+  \item \code{Xp = x - t(w)V^{-1}X}.
+  \item \code{Vp = v - t(w)V^{-1}w}.
 }
 }
 \description{
 Calculate the sufficient statistics of an LMN model.
 }
 \details{
-The model is defined as
-\deqn{Y ~ MNorm(X*Beta, V, Sigma),}
-where MNorm is the Matrix-Normal distribution, i.e.
-\deqn{vec(Y) ~ N( vec(X*Beta), Sigma \otimes V ).}
+The multi-response normal linear regression model is defined as
+\preformatted{
+Y ~ MNorm(X Beta, V, Sigma),
+}
+where MNorm is the Matrix-Normal distribution, i.e., corresponding to the multivariate normal distribution
+\preformatted{
+vec(Y) ~ N( vec(X Beta), Sigma %x% V ),
+}
+where \code{vec(Y)} is a vector of length \code{n*q} stacking the elements of \code{Y}, and \code{\%x\%} is the Kronecker product.  The function \code{lmn.suff} returns everything required to calculate the (normalized) probability distribution \code{p(Y | Beta, Sigma, X, V)}.  For mathematical details please see \code{vignette("LMN", package = "LMN")}.
 
-The log-likelihood is
-\deqn{ll(Beta, Sigma) = (-1/2) * ( trace( Sigma^{-1} ( S + t(Beta-B) T (Beta-B)) ) + n log(|Sigma|) + q ldV ).}
-When \code{T = 0} and \code{S = 0} respectively, \code{Beta = 0} or \code{Sigma = diag(q)} is assumed to be known.
-
-If \code{npred > 0}, summary statistics are produced for the prediction of \code{y} in
-   \deqn{YY = rbind(Y, y) ~ MNorm(XX*Beta, VV, Sigma),}
-   where \code{VV = rbind(cbind(V, w), cbind(t(w), v))} and \code{XX = rbind(X, x)}.
-   In this case the inputs are \code{Y}, \code{V = VV} and \code{X = XX}. The predictive distribution for new observations y is
-\deqn{y | Y ~ MNorm(Ap + Xp * Beta, Vp, Sigma).}
-\code{Xp = 0} indicates that \code{Beta = 0} is known.
+When \code{npred > 0}, summary statistics are produced to calculate the conditional (predictive) distribution \code{p(y | Y, XX, VV, Beta, Sigma)}, where
+\preformatted{
+YY = rbind(Y, y) ~ MNorm(XX*Beta, VV, Sigma),
+}
+\code{VV = rbind(cbind(V, w), cbind(t(w), v))} and \code{XX = rbind(X, x)}.  In this case the inputs to \code{lmn.suff} are \code{Y}, \code{V = VV} and \code{X = XX}. Please see vignette for mathematical details.
 }
 \examples{
-## Data
-Y = matrix(rnorm(100),50,2)
+# Data
+n <- 50
+q <- 3
+Y <- matrix(rnorm(n*q),n,q)
 
-## No intercept example, diagonal V input
-X = 0
-V = exp(-seq(1:nrow(Y)))
-lmn.suff(Y, X, V=V)
+# No intercept, diagonal V input
+X <- 0
+V <- exp(-(1:n)/n)
+lmn.suff(Y, X = X, V = V, Vtype = "diag")
 
-## Intercept example, scalar V input
-X = matrix(1,50,1)
-V = 0.5
-lmn.suff(Y, X, V=V)
+# X = (scaled) Intercept, scalar V input (no need to specify Vtype)
+X <- 2
+V <- .5
+lmn.suff(Y, X = X, V = V)
 
-## acf example, scaled intercept input
-X = 3/2
-acf = 0.5*exp(-seq(1:nrow(Y)))
-lmn.suff(Y, X, acf=acf)
+# X = dense matrix, Toeplitz variance matrix
+p <- 2
+X <- matrix(rnorm(n*p), n, p)
+acf <- SuperGauss::Toeplitz(acf = 0.5*exp(-seq(1:n)/n))
+lmn.suff(Y, X = X, V = acf, Vtype = "acf")
 
 }

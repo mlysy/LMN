@@ -1,2 +1,7 @@
-# compiled object files
-setup.R
+^Meta$
+^doc$
+^LICENSE$
+^README\.md$
+^TODO\.md$
+^examples$
+^man-roxygen$

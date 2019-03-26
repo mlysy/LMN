@@ -3,6 +3,7 @@
 export(lmn.loglik)
 export(lmn.marg)
 export(lmn.post)
+export(lmn.prior)
 export(lmn.prof)
 export(lmn.suff)
 import(SuperGauss)

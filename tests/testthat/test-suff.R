@@ -1,12 +1,12 @@
 #--- test sufficient statistics -------------------------------------------------
-library(LMN)
+## library(LMN)
 source("lmn-testfunctions.R")
-context("Suff")
+context("Sufficient Statistics")
 
 test_that("Sufficient statistics are correctly computed.", {
   calc.diff <- FALSE
   case.par <- expand.grid(p = c(-1, 0, 1, 3, 5), q = c(1, 3, 5),
-                          type = c("scalar", "diag", "acf", "Toeplitz", "V"),
+                          Vtype = c("scalar", "diag", "acf", "Toeplitz", "full"),
                           noSigma = c(TRUE, FALSE))
   ncases <- nrow(case.par)
   n <- 20
@@ -19,7 +19,7 @@ test_that("Sufficient statistics are correctly computed.", {
     cp <- case.par[ii,]
     p <- cp$p
     q <- cp$q
-    type <- as.character(cp$type)
+    Vtype <- as.character(cp$Vtype)
     noSigma <- cp$noSigma
     # set up data
     Y <- rMnorm(n,q)
@@ -35,10 +35,10 @@ test_that("Sufficient statistics are correctly computed.", {
     }
     acf <- exp(-2*(1:n)/n)
     diagV <- rexp(n)
-    if(type == "scalar") {
+    if(Vtype == "scalar") {
       VV <- acf[1]
       VR <- diag(rep(acf[1], n))
-    } else if(type == "diag") {
+    } else if(Vtype == "diag") {
       VV <- diagV
       VR <- diag(diagV)
     } else {
@@ -46,10 +46,12 @@ test_that("Sufficient statistics are correctly computed.", {
       VV <- VR
     }
     # calculate with lmn.suff
-    if(type == "acf") {
-      suff <- lmn.suff(Y = Y, X = XX, acf = acf)
-    } else if(type == "Toeplitz") {
-      suff <- lmn.suff(Y = Y, X = XX, acf = Toeplitz(acf = acf))
+    if(Vtype == "acf") {
+      suff <- lmn.suff(Y = Y, X = XX, V = acf, Vtype = Vtype)
+    } else if(Vtype == "Toeplitz") {
+      suff <- lmn.suff(Y = Y, X = XX, V = Toeplitz(acf = acf))
+    } else if(Vtype == "diag") {
+      suff <- lmn.suff(Y = Y, X = XX, V = VV, Vtype = Vtype)
     } else {
       suff <- lmn.suff(Y = Y, X = XX, V = VV)
     }

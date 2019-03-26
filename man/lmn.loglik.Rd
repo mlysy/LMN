@@ -2,53 +2,34 @@
 % Please edit documentation in R/lmn-loglik.R
 \name{lmn.loglik}
 \alias{lmn.loglik}
-\title{Log-likelihood function for LMN models.}
+\title{Loglikelihood function for LMN models.}
 \usage{
-lmn.loglik(Beta, Sigma, suff, Y, X, V, acf)
+lmn.loglik(Beta, Sigma, suff)
 }
 \arguments{
-\item{Beta}{an (p x q) matrix (see details).}
+\item{Beta}{A \code{p x q} matrix of regression coefficients (see \code{\link{lmn.suff}}).}
 
-\item{Sigma}{an (q x q) matrix (see details).}
+\item{Sigma}{A \code{q x q} matrix of error variances (see \code{\link{lmn.suff}}).}
 
-\item{suff}{result of call to lmn.suff (optional, to avoid calculations).}
-
-\item{Y}{an (n x q) matrix.}
-
-\item{X}{an (n x p) matrix. May also be passed as
-\itemize{
-   \item \code{X = 0}: in which case there is no intercept,
-   \item \code{X != 0}: in which case a scaled intercept X = X * matrix(1, n, 1)
-   is assumed.
-}}
-
-\item{V}{either: (1) an \code{n x n} full matrix, (2) an vector of length \code{n} such that \code{V = diag(V)}, (3) a scalar, such that \code{V = V * diag(n)}.}
-
-\item{acf}{a vector of length n such that V = toeplitz(acf).}
+\item{suff}{An object of class \code{lmn_suff} (see \code{\link{lmn.suff}}).}
 }
 \value{
-The calculated log-likelihood.
+Scalar -- the value of the loglikelihood.
 }
 \description{
-Log-likelihood function for LMN models.
-}
-\details{
-The model is defined as
-\deqn{Y ~ MNorm(X*Beta, V, Sigma),}
-where MNorm is the Matrix-Normal distribution, i.e.
-\deqn{vec(Y) ~ N( vec(X*Beta), Sigma \otimes V ).}
+Loglikelihood function for LMN models.
 }
 \examples{
-## Data
-Y = matrix(rnorm(100),50,2)
+# generate data
+n <- 50
+q <- 3
+Y <- matrix(rnorm(n*q),n,q) # response matrix
+X <- 1 # intercept covariate
+V <- 0.5 # scalar variance specification
+suff <- lmn.suff(Y, X = X, V = V) # sufficient statistics
 
-## Scalar V example
-X = matrix(1,50,1)
-q = ncol(X)
-V = 0.5
-suff = lmn.suff(Y, X, V=V)
-Beta = matrix(c(1,0.5),1,2)
-Sigma = diag(2)
-lmn.loglik(Beta, Sigma, suff, Y, X, V)
-
+# calculate loglikelihood
+Beta <- matrix(rnorm(q),1,q)
+Sigma <- diag(rexp(q))
+lmn.loglik(Beta = Beta, Sigma = Sigma, suff = suff)
 }
