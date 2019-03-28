@@ -1,6 +1,6 @@
-- [ ] Uniform formatting of `@title`.  Should be: first word only capitalized, ends with ".".
+- [x] Uniform formatting of `@title`.  Should be: first word only capitalized, ends with ".".
 
-- [ ] `@return` lists.  These should all be of the form
+- [x] `@return` lists.  These should all be of the form
 
     ```r
     #' @return something something a list with elements: (don't forget the ":")
@@ -22,21 +22,23 @@
 
     To see the different outputs, compile the PDF doc (this can be done from the terminal using `R CMD check LMN_XYZ.tar.gz`), and also look at output in Rstudio (which is a bit nicer than vim/emacs, but still very basic and it's what most people will be using)
 
-- [ ] `@description`.  These can sometimes be made more informative, if the `@title` is not enough.
+- [x] `@description`.  These can sometimes be made more informative, if the `@title` is not enough.
 
-- [ ] Short examples for all exported functions (i.e., having the `@export` keyword).  These go in a block called `@examples`.  Also, the main doc for the package (in the file `LMN.R`) should have an example.
+- [x] Short examples for all exported functions (i.e., having the `@export` keyword).  These go in a block called `@examples`.  Also, the main doc for the package (in the file `LMN.R`) should have an example.
 
 - [ ] Package vignette.  A basic walkthrough, typically using a specific example.  I'll get this started.
 
-- [ ] Use documentation templates, i.e., `man-roxygen` and `examples`.
+- [x] Use documentation templates, i.e., `man-roxygen` and `examples`.
 
-- [ ] Pass `lmn_suff` objects to other functions, instead of entire interface.
+- [x] Pass `lmn_suff` objects to other functions, instead of entire interface.
 
-- [ ] Replace "." by "_".  Also, consider renaming `Beta.hat` to `Bhat`.
+- [ ] Replace "." by "_".  
+
+- [ ] Also, consider renaming `Beta.hat` to `Bhat`.
 
 - [ ] Replace `eqn` and `deqn` roxygen tags with `preformatted`.  Actually, no.  Just write these properly.  Not so hard.
 
-- [ ] Remove `debug` arguments.
+- [x] Remove `debug` arguments.
 
 - [ ] Package name -- should it be `lmn`???
 
