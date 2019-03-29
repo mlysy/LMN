@@ -1,20 +1,23 @@
-#' (L)inear (M)odel for (N)uisance Parameters
+#' Tools for (L)inear (M)odels with (N)uisance Parameters.
 #'
-#' @description Efficient profile likelihood and marginal posteriors when nuisance parameters are those of linear regression models.
-#' @details The methodology applied to the parameters \code{theta, Beta, Sigma} of models of the form
-#' \deqn{Y | theta ~ MN( X(theta) * Beta, V(theta), Sigma).}
-#' A conditionally conjugate prior for (\code{Beta}, \code{Sigma}) is
-#' \deqn{(Beta, Sigma) | theta ~ MNIW(Lambda, Omega, Psi, nu).}
-#' Note that the hyperparameters can depend on \code{theta}, e.g., \code{Lambda(theta)}, \code{Omega(theta)}, etc.  To achieve some of the restricted forms of the model:
-#' \itemize{
-#' \item \code{Omega = 0}: Flat prior \code{Beta ~ 1}.
-#' \item \code{Psi = 0}: Improper prior \code{Sigma ~ 1/sqrt(|Sigma|)^(v+p+1)}.
-#' \item \code{Omega = NA}: No \code{Beta}, i.e., Y ~ MN(0, V, Sigma).
-#' \item \code{nu = NA}: No \code{Sigma}, i.e., Y ~ MN(X * Beta, V, I).
+#' Efficient profile likelihood and marginal posteriors when nuisance parameters are those of linear regression models.
+#'
+#' @details Consider a model \eqn{p(\boldsymbol{Y} \mid \boldsymbol{B}, \boldsymbol{\Sigma}, \boldsymbol{\theta})}{p(Y | B, \Sigma, \theta)} of the form
+#' \deqn{
+#' \boldsymbol{Y} \sim \textrm{Matrix-Normal}(\boldsymbol{X}(\boldsymbol{\theta})\boldsymbol{B}, \boldsymbol{V}(\boldsymbol{\theta}), \boldsymbol{\Sigma}),
+#' }{
+#' Y ~ Matrix-Normal(X(\theta) B, V(\theta), \Sigma),
 #' }
-#' @docType package
-#' @name LMN
+#' where \eqn{\boldsymbol{Y}_{n \times q}}{Y_(n x q)} is the response matrix, \eqn{\boldsymbol{X}(\theta)_{n \times p}}{X(\theta)_(n x p)} is a covariate matrix which depends on \eqn{\boldsymbol{\theta}}{\theta}, \eqn{\boldsymbol{B}_{p \times q}}{B_(p x q)} is the coefficient matrix, \eqn{\boldsymbol{V}(\boldsymbol{\theta})_{n \times n}}{V(\theta)_(n x n)} and \eqn{\boldsymbol{\Sigma}_{q \times q}}{\Sigma_(q x q)} are the between-row and between-column variance matrices, and (suppressing the dependence on \eqn{\boldsymbol{\theta}}{\theta}) the Matrix-Normal distribution is defined by the multivariate normal distribution
+#' \eqn{
+#' \textrm{vec}(\boldsymbol{Y}) \sim \mathcal{N}(\textrm{vec}(\boldsymbol{X}\boldsymbol{B}), \boldsymbol{\Sigma} \otimes \boldsymbol{V}),
+#' }{
+#' vec(Y) ~ N( vec(X B), \Sigma \%x\% V ),
+#' }
+#' where \eqn{\textrm{vec}(\boldsymbol{Y})}{vec(Y)} is a vector of length \eqn{nq} stacking the columns of of \eqn{\boldsymbol{Y}}{Y}, and \eqn{\boldsymbol{\Sigma} \otimes \boldsymbol{V}}{\Sigma \%x\% V} is the Kronecker product.
+#'
+#' The model above is referred to as a Linear Model with Nuisance parameters (LMN) \eqn{(\boldsymbol{B}, \boldsymbol{\Sigma})}{(B,\Sigma)}, with parameters of interest \eqn{\boldsymbol{\theta}}{\theta}.  That is, the \pkg{LMN} package provides tools to efficiently conduct inference on \eqn{\boldsymbol{\theta}}{\theta} first, and subsequently on \eqn{(\boldsymbol{B}, \boldsymbol{\Sigma})}{(B,\Sigma)}, by Frequentist profile likelihood or Bayesian marginal inference with a Matrix-Normal Inverse-Wishart (MNIW) conjugate prior on \eqn{(\boldsymbol{B}, \boldsymbol{\Sigma})}{(B,\Sigma)}.
 #' @import SuperGauss
 #' @importFrom Rcpp evalCpp
 #' @useDynLib LMN, .registration = TRUE
-NULL
+"_PACKAGE"

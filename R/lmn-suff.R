@@ -37,13 +37,13 @@
 #' }{
 #' Y ~ Matrix-Normal(X B, V, \Sigma),
 #' }
-#' where \eqn{\boldsymbol{Y}_{N \times q}}{Y_(N x q)} is the response matrix, \eqn{\boldsymbol{X}_{N \times p}}{X_(N x p)} is the covariate matrix, \eqn{\boldsymbol{B}_{p \times q}}{B_(p x q)} is the coefficient matrix, \eqn{\boldsymbol{V}_{N \times N}}{V_(N x N)} and \eqn{\boldsymbol{\Sigma}_{q \times q}}{\Sigma_(q x q)} are the between-row and between-column variance matrices, and the Matrix-Normal distribution is defined by the multivariate normal distribution
+#' where \eqn{\boldsymbol{Y}_{n \times q}}{Y_(n x q)} is the response matrix, \eqn{\boldsymbol{X}_{n \times p}}{X_(n x p)} is the covariate matrix, \eqn{\boldsymbol{B}_{p \times q}}{B_(p x q)} is the coefficient matrix, \eqn{\boldsymbol{V}_{n \times n}}{V_(n x n)} and \eqn{\boldsymbol{\Sigma}_{q \times q}}{\Sigma_(q x q)} are the between-row and between-column variance matrices, and the Matrix-Normal distribution is defined by the multivariate normal distribution
 #' \eqn{
 #' \textrm{vec}(\boldsymbol{Y}) \sim \mathcal{N}(\textrm{vec}(\boldsymbol{X}\boldsymbol{B}), \boldsymbol{\Sigma} \otimes \boldsymbol{V}),
 #' }{
 #' vec(Y) ~ N( vec(X B), \Sigma \%x\% V ),
 #' }
-#' where \eqn{\textrm{vec}(\boldsymbol{Y})}{vec(Y)} is a vector of length \eqn{Nq} stacking the columns of of \eqn{\boldsymbol{Y}}{Y}, and \eqn{\boldsymbol{\Sigma} \otimes \boldsymbol{V}}{\Sigma \%x\% V} is the Kronecker product.
+#' where \eqn{\textrm{vec}(\boldsymbol{Y})}{vec(Y)} is a vector of length \eqn{nq} stacking the columns of of \eqn{\boldsymbol{Y}}{Y}, and \eqn{\boldsymbol{\Sigma} \otimes \boldsymbol{V}}{\Sigma \%x\% V} is the Kronecker product.
 #'
 #' The function \code{lmn.suff} returns everything needed to efficiently calculate the likelihood function
 #' \deqn{\mathcal{L}(\boldsymbol{B}, \boldsymbol{\Sigma} \mid \boldsymbol{Y}, \boldsymbol{X}, \boldsymbol{V}) = p(\boldsymbol{Y} \mid \boldsymbol{X}, \boldsymbol{V}, \boldsymbol{B}, \boldsymbol{\Sigma}).
