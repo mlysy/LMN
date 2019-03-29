@@ -192,7 +192,7 @@ for(ii in 1:ncases) {
   } else {
     suff <- lmn.suff(Y = Y, X = XX, V = VV)
   }
-  Beta.hat <- suff$Beta.hat
+  Bhat <- suff$Bhat
   Sigma.hat <- suff$S/suff$n
   # check that gradient equals 0
   if(!noBeta && !noSigma) {
@@ -201,7 +201,7 @@ for(ii in 1:ncases) {
              Mu = XR %*% matrix(theta[1:(p*q)],p,q),
              ColV = ltri2Sig(theta[p*q + (1:(q*(q+1)/2))]))
     }
-    ld.grad <- grad(logdens, x = c(Beta.hat, Sig2ltri(Sigma.hat)))
+    ld.grad <- grad(logdens, x = c(Bhat, Sig2ltri(Sigma.hat)))
   } else if(noBeta && !noSigma) {
     logdens <- function(theta) {
       lMnorm(X = Y, RowV = VR,
@@ -214,7 +214,7 @@ for(ii in 1:ncases) {
              Mu = XR %*% matrix(theta[1:(p*q)],p,q),
              ColV = diag(q))
     }
-    ld.grad <- grad(logdens, x = Beta.hat)
+    ld.grad <- grad(logdens, x = Bhat)
   } else {
     ld.grad <- NA
   }
@@ -277,11 +277,11 @@ for(ii in 1:ncases) {
   } else {
     suff <- lmn.suff(Y = Y, X = XX, V = VV)
   }
-  Beta.hat <- suff$Beta.hat
+  Bhat <- suff$Bhat
   Sigma.hat <- suff$S/suff$n
   # check that profile likelihood equals long hand calculation
   if(!noBeta) {
-    Mu <- XR %*% Beta.hat
+    Mu <- XR %*% Bhat
   } else {
     Mu <- matrix(0,n,q)
   }

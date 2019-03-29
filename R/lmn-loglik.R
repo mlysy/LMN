@@ -15,12 +15,12 @@ lmn.loglik <- function(Beta, Sigma, suff) {
   S <- suff$S
   q <- nrow(S)
   ldV <- suff$ldV
-  Beta.hat <- suff$Beta.hat
+  Bhat <- suff$Bhat
   T <- suff$T
-  noBeta <- is.null(Beta.hat)
+  noBeta <- is.null(Bhat)
   # log-likelihood calculation
   if(!noBeta) {
-    Z <- Beta-Beta.hat
+    Z <- Beta-Bhat
     S <- S + crossprod(Z, T %*% Z)
   }
   -0.5 * (sum(diag(solveV(Sigma,S))) + q*ldV + n*ldet(Sigma) + n*q * log(2*pi))

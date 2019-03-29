@@ -54,7 +54,7 @@ test_that("Gradient = 0 at MLE.", {
     } else {
       suff <- lmn.suff(Y = Y, X = XX, V = VV, Vtype = Vtype)
     }
-    Beta.hat <- suff$Beta.hat
+    Bhat <- suff$Bhat
     Sigma.hat <- suff$S/suff$n
     # check that gradient equals 0
     if(!noBeta && !noSigma) {
@@ -63,7 +63,7 @@ test_that("Gradient = 0 at MLE.", {
                Mu = XR %*% matrix(theta[1:(p*q)],p,q),
                ColV = ltri2Sig(theta[p*q + (1:(q*(q+1)/2))]))
       }
-      ld.grad <- grad(logdens, x = c(Beta.hat, Sig2ltri(Sigma.hat)))
+      ld.grad <- grad(logdens, x = c(Bhat, Sig2ltri(Sigma.hat)))
     } else if(noBeta && !noSigma) {
       logdens <- function(theta) {
         lMnorm(X = Y, RowV = VR,
@@ -76,7 +76,7 @@ test_that("Gradient = 0 at MLE.", {
                Mu = XR %*% matrix(theta[1:(p*q)],p,q),
                ColV = diag(q))
       }
-      ld.grad <- grad(logdens, x = Beta.hat)
+      ld.grad <- grad(logdens, x = Bhat)
     } else {
       ld.grad <- NA
     }

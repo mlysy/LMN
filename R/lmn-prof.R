@@ -1,6 +1,6 @@
 #' Profile loglikelihood for the LMN model.
 #'
-#' Calculate the loglikelihood of the LMN model defined in \code{\link{lmn.suff}} at the MLE \code{Beta = Beta.hat} and \code{Sigma = Sigma.hat}.
+#' Calculate the loglikelihood of the LMN model defined in \code{\link{lmn.suff}} at the MLE \code{Beta = Bhat} and \code{Sigma = Sigma.hat}.
 #'
 #' @template param-suff
 #' @template param-noSigma

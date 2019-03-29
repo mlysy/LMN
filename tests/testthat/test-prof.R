@@ -56,10 +56,10 @@ test_that("Profile likelihood equals likelihood at MLE.", {
     }
     # check profile likelihood
     # calculate long hand
-    Beta.hat <- suff$Beta.hat
+    Bhat <- suff$Bhat
     Sigma.hat <- suff$S/suff$n
     if(!noBeta) {
-      Mu <- XR %*% Beta.hat
+      Mu <- XR %*% Bhat
     } else {
       Mu <- matrix(0,n,q)
     }

@@ -10,4 +10,4 @@ suff <- lmn.suff(Y, X = X, V = V, Vtype = "diag") # sufficient statistics
 lmn.prof(suff)
 
 # check that it's the same as loglikelihood at MLE
-lmn.loglik(Beta = suff$Beta.hat, Sigma = suff$S/suff$n, suff = suff)
+lmn.loglik(Beta = suff$Bhat, Sigma = suff$S/suff$n, suff = suff)

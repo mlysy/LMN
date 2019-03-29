@@ -11,7 +11,7 @@ test_that("Sufficient statistics are correctly computed.", {
   ncases <- nrow(case.par)
   n <- 20
   if(calc.diff) {
-    MaxDiff <- data.frame(Beta.hat = rep(NA, ncases),
+    MaxDiff <- data.frame(Bhat = rep(NA, ncases),
                           T = NA, S = NA, ldV = NA)
   }
   for(ii in 1:ncases) {
@@ -60,19 +60,19 @@ test_that("Sufficient statistics are correctly computed.", {
     V <- VR[1:n,1:n,drop = FALSE]
     if(p != 0) {
       T <- crossprod(X, solve(V, X))
-      Beta.hat <- solve(T, crossprod(X, solve(V, Y)))
+      Bhat <- solve(T, crossprod(X, solve(V, Y)))
     } else {
       T <- NULL
-      Beta.hat <- rep(0,q)
+      Bhat <- rep(0,q)
     }
-    S <- crossprod((Y - X%*%Beta.hat), solve(V, Y - X%*%Beta.hat))
+    S <- crossprod((Y - X%*%Bhat), solve(V, Y - X%*%Bhat))
     ldV <- ldet(V)
     # check sufficient statistics
     if(p != 0) {
       if(calc.diff) {
-        MaxDiff$Beta.hat[ii] <- max(abs(Beta.hat - suff$Beta.hat))
+        MaxDiff$Bhat[ii] <- max(abs(Bhat - suff$Bhat))
       } else {
-        expect_equal(Beta.hat, suff$Beta.hat)
+        expect_equal(Bhat, suff$Bhat)
       }
     }
     if(calc.diff) {

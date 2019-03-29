@@ -15,7 +15,7 @@ lmn.prof(suff, noSigma = FALSE)
 Scalar -- the calculated value of the profile loglikelihood.
 }
 \description{
-Calculate the loglikelihood of the LMN model defined in \code{\link{lmn.suff}} at the MLE \code{Beta = Beta.hat} and \code{Sigma = Sigma.hat}.
+Calculate the loglikelihood of the LMN model defined in \code{\link{lmn.suff}} at the MLE \code{Beta = Bhat} and \code{Sigma = Sigma.hat}.
 }
 \examples{
 # generate data
@@ -30,5 +30,5 @@ suff <- lmn.suff(Y, X = X, V = V, Vtype = "diag") # sufficient statistics
 lmn.prof(suff)
 
 # check that it's the same as loglikelihood at MLE
-lmn.loglik(Beta = suff$Beta.hat, Sigma = suff$S/suff$n, suff = suff)
+lmn.loglik(Beta = suff$Bhat, Sigma = suff$S/suff$n, suff = suff)
 }

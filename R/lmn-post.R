@@ -21,7 +21,7 @@ lmn.post <- function(suff, prior) {
     stop("suff must be an object of class 'lmn_suff'.")
   }
   n <- suff$n
-  Betahat <- suff$Beta.hat
+  Betahat <- suff$Bhat
   T <- suff$T
   S <- suff$S
   noBeta <- is.null(T)

@@ -10,7 +10,7 @@
     #' }
     ```
 
-- [ ] Latex code.  Typically this doesn't display properly in vim/emacs & rstudio.  So the trick is to define such commands twice, , e.g.:
+- [x] Latex code.  Typically this doesn't display properly in vim/emacs & rstudio.  So the trick is to define such commands twice, , e.g.:
 
     ```r
     #' \deqn{
@@ -34,9 +34,9 @@
 
 - [ ] Replace "." by "_".  
 
-- [ ] Also, consider renaming `Beta.hat` to `Bhat`.
+- [x] Also, consider renaming `Beta.hat` to `Bhat`.
 
-- [ ] Replace `eqn` and `deqn` roxygen tags with `preformatted`.  Actually, no.  Just write these properly.  Not so hard.
+- [x] Replace `eqn` and `deqn` roxygen tags with `preformatted`.  Actually, no.  Just write these properly.  Not so hard.
 
 - [x] Remove `debug` arguments.
 

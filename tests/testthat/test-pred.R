@@ -57,12 +57,12 @@ test_that("Prediction statistics are correctly computed.", {
     V <- VR[1:n,1:n,drop = FALSE]
     if(p != 0) {
       T <- crossprod(X, solve(V, X))
-      Beta.hat <- solve(T, crossprod(X, solve(V, Y)))
+      Bhat <- solve(T, crossprod(X, solve(V, Y)))
     } else {
       T <- 0
-      Beta.hat <- rep(0,q)
+      Bhat <- rep(0,q)
     }
-    S <- crossprod((Y - X%*%Beta.hat), solve(V, Y - X%*%Beta.hat))
+    S <- crossprod((Y - X%*%Bhat), solve(V, Y - X%*%Bhat))
     ldV <- ldet(V)
     # check predictions
     if(npred > 0) {

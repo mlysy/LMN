@@ -17,7 +17,7 @@
 #' @param npred A nonnegative integer.  If positive, calculates sufficient statistics to make predictions for new responses. See \strong{Details}.
 #' @return An S3 object of type \code{lmn_suff}, consisting of a list with elements:
 #' \describe{
-#'   \item{\code{Beta.hat}}{The \eqn{p \times q}{p x q} matrix \eqn{\hat{\boldsymbol{B}} = (\boldsymbol{X}'\boldsymbol{V}^{-1}\boldsymbol{X})^{-1}\boldsymbol{X}'\boldsymbol{V}^{-1}\boldsymbol{Y}}{B_hat = (X'V^{-1}X)^{-1}X'V^{-1}Y}.}
+#'   \item{\code{Bhat}}{The \eqn{p \times q}{p x q} matrix \eqn{\hat{\boldsymbol{B}} = (\boldsymbol{X}'\boldsymbol{V}^{-1}\boldsymbol{X})^{-1}\boldsymbol{X}'\boldsymbol{V}^{-1}\boldsymbol{Y}}{B_hat = (X'V^{-1}X)^{-1}X'V^{-1}Y}.}
 #'   \item{\code{T}}{The \eqn{p \times p}{p x p} matrix \eqn{\boldsymbol{T} = \boldsymbol{X}'\boldsymbol{V}^{-1}\boldsymbol{X}}{T = X'V^{-1}X}.}
 #'   \item{\code{S}}{The \eqn{q \times q}{q x q} matrix \eqn{\boldsymbol{S} = (\boldsymbol{Y} - \boldsymbol{X} \hat{\boldsymbol{B}})'\boldsymbol{V}^{-1}(\boldsymbol{Y} - \boldsymbol{X} \hat{\boldsymbol{B}})}{S = (Y-X B_hat)'V^{-1}(Y-X B_hat)}.}
 #'   \item{\code{ldV}}{The scalar log-determinant of \code{V}.}
@@ -113,12 +113,12 @@ lmn.suff <- function(Y, X, V, Vtype, npred = 0) {
   # convert inner products to sufficient statistics
   S <- IP[1:q,1:q,drop=FALSE]
   if(noBeta) {
-    Beta.hat <- NULL
+    Bhat <- NULL
     T <- NULL
   } else {
     T <- IP[q+(1:p),q+(1:p),drop=FALSE]
-    Beta.hat <- solveV(T, IP[q+(1:p),1:q,drop=FALSE])
-    S <- S - IP[1:q,q+(1:p)] %*% Beta.hat
+    Bhat <- solveV(T, IP[q+(1:p),1:q,drop=FALSE])
+    S <- S - IP[1:q,q+(1:p)] %*% Bhat
   }
   # predictive distribution
   if(npred > 0) {
@@ -144,7 +144,7 @@ lmn.suff <- function(Y, X, V, Vtype, npred = 0) {
     Vp <- Vp - IP[q+p+(1:npred),q+p+(1:npred)]
   }
   # output
-  ans <- list(Beta.hat = Beta.hat, S = S, T = T, ldV = ldV, n = n, p = p, q = q)
+  ans <- list(Bhat = Bhat, S = S, T = T, ldV = ldV, n = n, p = p, q = q)
   if(npred > 0) {
     ans <- c(ans, list(Ap = Ap, Xp = Xp, Vp = Vp))
   }
@@ -221,9 +221,9 @@ lmn.suff <- function(Y, X, V, Vtype, npred = 0) {
 
 
 # \describe{
-#   \item{\code{Beta.hat}}{The \code{p x q} matrix \code{(t(X)V^{-1}X)^{-1}t(X)V^{-1}Y}, or \code{NULL} if \code{X = 0}.  The \eqn{p \times q}{p x q} matrix \eqn{\hat{\boldsymbol{B}} = (\boldsymbol{X}'\boldsymbol{V}^{-1}\boldsymbol{X})^{-1}\boldsymbol{X}'\boldsymbol{V}^{-1}\boldsymbol{Y}}{B_hat = (X'V^{-1}X)^{-1}X'V^{-1}Y}.}
+#   \item{\code{Bhat}}{The \code{p x q} matrix \code{(t(X)V^{-1}X)^{-1}t(X)V^{-1}Y}, or \code{NULL} if \code{X = 0}.  The \eqn{p \times q}{p x q} matrix \eqn{\hat{\boldsymbol{B}} = (\boldsymbol{X}'\boldsymbol{V}^{-1}\boldsymbol{X})^{-1}\boldsymbol{X}'\boldsymbol{V}^{-1}\boldsymbol{Y}}{B_hat = (X'V^{-1}X)^{-1}X'V^{-1}Y}.}
 #   \item{\code{T}}{The \code{p x p} matrix \code{t(X)V^{-1}X}.}
-#   \item{\code{S}}{The \code{q x q} matrix \code{t(Y-X Beta.hat)V^{-1}(Y-X Beta.hat)}.}
+#   \item{\code{S}}{The \code{q x q} matrix \code{t(Y-X Bhat)V^{-1}(Y-X Bhat)}.}
 #   \item{\code{ldV}}{The scalar log-determinant of \code{V}.}
 #   \item{\code{n}, \code{p}, \code{q}}{The problem dimensions, namely \code{n = nrow(Y)}, \code{p = nrow(Beta)} (or \code{p = 0} if \code{X = 0}), and \code{q = ncol(Y)}.}
 # }

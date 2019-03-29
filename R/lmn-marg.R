@@ -12,7 +12,7 @@ lmn.marg <- function(suff, prior, post) {
     stop("suff must be an object of class 'lmn_suff'.")
   }
   n <- suff$n
-  Betahat <- suff$Beta.hat
+  Betahat <- suff$Bhat
   S <- suff$S
   ldV <- suff$ldV
   noBeta <- is.null(suff$T)

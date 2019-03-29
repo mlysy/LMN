@@ -29,7 +29,7 @@ For \code{V} specified as a matrix or scalar, \code{Vtype} is deduced automatica
 \value{
 An S3 object of type \code{lmn_suff}, consisting of a list with elements:
 \describe{
-  \item{\code{Beta.hat}}{The \eqn{p \times q}{p x q} matrix \eqn{\hat{\boldsymbol{B}} = (\boldsymbol{X}'\boldsymbol{V}^{-1}\boldsymbol{X})^{-1}\boldsymbol{X}'\boldsymbol{V}^{-1}\boldsymbol{Y}}{B_hat = (X'V^{-1}X)^{-1}X'V^{-1}Y}.}
+  \item{\code{Bhat}}{The \eqn{p \times q}{p x q} matrix \eqn{\hat{\boldsymbol{B}} = (\boldsymbol{X}'\boldsymbol{V}^{-1}\boldsymbol{X})^{-1}\boldsymbol{X}'\boldsymbol{V}^{-1}\boldsymbol{Y}}{B_hat = (X'V^{-1}X)^{-1}X'V^{-1}Y}.}
   \item{\code{T}}{The \eqn{p \times p}{p x p} matrix \eqn{\boldsymbol{T} = \boldsymbol{X}'\boldsymbol{V}^{-1}\boldsymbol{X}}{T = X'V^{-1}X}.}
   \item{\code{S}}{The \eqn{q \times q}{q x q} matrix \eqn{\boldsymbol{S} = (\boldsymbol{Y} - \boldsymbol{X} \hat{\boldsymbol{B}})'\boldsymbol{V}^{-1}(\boldsymbol{Y} - \boldsymbol{X} \hat{\boldsymbol{B}})}{S = (Y-X B_hat)'V^{-1}(Y-X B_hat)}.}
   \item{\code{ldV}}{The scalar log-determinant of \code{V}.}
