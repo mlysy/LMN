@@ -16,38 +16,48 @@
 #' For \code{V} specified as a matrix or scalar, \code{Vtype} is deduced automatically and need not be specified.
 #' @param npred A nonnegative integer.  If positive, calculates sufficient statistics to make predictions for new responses. See \strong{Details}.
 #' @return An S3 object of type \code{lmn_suff}, consisting of a list with elements:
-#' \itemize{
-#'   \item \code{Beta.hat = (t(X)V^{-1}X)^{-1}t(X)V^{-1}Y}, or \code{NULL} if \code{X = 0}.
-#'   \item \code{T = t(X)V^{-1}X}.
-#'   \item \code{S = t(Y-X*Betahat)V^{-1}(Y-X*Betahat)}.
-#'   \item \code{ldV = log(|V|)}.
-#'   \item \code{n = nrow(Y)}.
-#'   \item \code{p = nrow(Beta)}, or \code{p = 0} if \code{X = 0}.
-#'   \item \code{q = ncol(Y)}.
+#' \describe{
+#'   \item{\code{Beta.hat}}{The \eqn{p \times q}{p x q} matrix \eqn{\hat{\boldsymbol{B}} = (\boldsymbol{X}'\boldsymbol{V}^{-1}\boldsymbol{X})^{-1}\boldsymbol{X}'\boldsymbol{V}^{-1}\boldsymbol{Y}}{B_hat = (X'V^{-1}X)^{-1}X'V^{-1}Y}.}
+#'   \item{\code{T}}{The \eqn{p \times p}{p x p} matrix \eqn{\boldsymbol{T} = \boldsymbol{X}'\boldsymbol{V}^{-1}\boldsymbol{X}}{T = X'V^{-1}X}.}
+#'   \item{\code{S}}{The \eqn{q \times q}{q x q} matrix \eqn{\boldsymbol{S} = (\boldsymbol{Y} - \boldsymbol{X} \hat{\boldsymbol{B}})'\boldsymbol{V}^{-1}(\boldsymbol{Y} - \boldsymbol{X} \hat{\boldsymbol{B}})}{S = (Y-X B_hat)'V^{-1}(Y-X B_hat)}.}
+#'   \item{\code{ldV}}{The scalar log-determinant of \code{V}.}
+#'   \item{\code{n}, \code{p}, \code{q}}{The problem dimensions, namely \code{n = nrow(Y)}, \code{p = nrow(Beta)} (or \code{p = 0} if \code{X = 0}), and \code{q = ncol(Y)}.}
 #' }
-#' In addition, when \code{npred > 0}:
-#' \itemize{
-#'   \item \code{Ap = t(w)V^{-1}Y}.
-#'   \item \code{Xp = x - t(w)V^{-1}X}.
-#'   \item \code{Vp = v - t(w)V^{-1}w}.
+#' In addition, when \code{npred > 0} and with \eqn{\boldsymbol{x}}{x}, \eqn{\boldsymbol{w}}{w}, and \eqn{v} defined in \strong{Details}:
+#' \describe{
+#'   \item{\code{Ap}}{The \code{npred x q} matrix \eqn{\boldsymbol{A}_p = \boldsymbol{w}'\boldsymbol{V}^{-1}\boldsymbol{Y}}{A_p = w'V^{-1}Y}.}
+#'   \item{\code{Xp}}{The \code{npred x p} matrix \eqn{\boldsymbol{X}_p = \boldsymbol{x} - \boldsymbol{w}\boldsymbol{V}^{-1}\boldsymbol{X}}{X_p = x - w'V^{-1}X}.}
+#'   \item{\code{Vp}}{The scalar \eqn{V_p = v - \boldsymbol{w}\boldsymbol{V}^{-1}\boldsymbol{w}}{V_p = v - w'V^{-1}w}.}
 #' }
 #'
 #' @details
 #' The multi-response normal linear regression model is defined as
-#' \preformatted{
-#' Y ~ MNorm(X Beta, V, Sigma),
+#' \deqn{
+#' \boldsymbol{Y} \sim \textrm{Matrix-Normal}(\boldsymbol{X}\boldsymbol{B}, \boldsymbol{V}, \boldsymbol{\Sigma}),
+#' }{
+#' Y ~ Matrix-Normal(X B, V, \Sigma),
 #' }
-#' where MNorm is the Matrix-Normal distribution, i.e., corresponding to the multivariate normal distribution
-#' \preformatted{
-#' vec(Y) ~ N( vec(X Beta), Sigma %x% V ),
+#' where \eqn{\boldsymbol{Y}_{N \times q}}{Y_(N x q)} is the response matrix, \eqn{\boldsymbol{X}_{N \times p}}{X_(N x p)} is the covariate matrix, \eqn{\boldsymbol{B}_{p \times q}}{B_(p x q)} is the coefficient matrix, \eqn{\boldsymbol{V}_{N \times N}}{V_(N x N)} and \eqn{\boldsymbol{\Sigma}_{q \times q}}{\Sigma_(q x q)} are the between-row and between-column variance matrices, and the Matrix-Normal distribution is defined by the multivariate normal distribution
+#' \eqn{
+#' \textrm{vec}(\boldsymbol{Y}) \sim \mathcal{N}(\textrm{vec}(\boldsymbol{X}\boldsymbol{B}), \boldsymbol{\Sigma} \otimes \boldsymbol{V}),
+#' }{
+#' vec(Y) ~ N( vec(X B), \Sigma \%x\% V ),
 #' }
-#' where \code{vec(Y)} is a vector of length \code{n*q} stacking the elements of \code{Y}, and \code{\%x\%} is the Kronecker product.  The function \code{lmn.suff} returns everything required to calculate the (normalized) probability distribution \code{p(Y | Beta, Sigma, X, V)}.  For mathematical details please see \code{vignette("LMN", package = "LMN")}.
+#' where \eqn{\textrm{vec}(\boldsymbol{Y})}{vec(Y)} is a vector of length \eqn{Nq} stacking the columns of of \eqn{\boldsymbol{Y}}{Y}, and \eqn{\boldsymbol{\Sigma} \otimes \boldsymbol{V}}{\Sigma \%x\% V} is the Kronecker product.
 #'
-#' When \code{npred > 0}, summary statistics are produced to calculate the conditional (predictive) distribution \code{p(y | Y, XX, VV, Beta, Sigma)}, where
-#' \preformatted{
-#' YY = rbind(Y, y) ~ MNorm(XX*Beta, VV, Sigma),
+#' The function \code{lmn.suff} returns everything needed to efficiently calculate the likelihood function
+#' \deqn{\mathcal{L}(\boldsymbol{B}, \boldsymbol{\Sigma} \mid \boldsymbol{Y}, \boldsymbol{X}, \boldsymbol{V}) = p(\boldsymbol{Y} \mid \boldsymbol{X}, \boldsymbol{V}, \boldsymbol{B}, \boldsymbol{\Sigma}).
+#' }{
+#' L(B, \Sigma | Y, X, V) = p(Y | X, V, B, \Sigma).
 #' }
-#' \code{VV = rbind(cbind(V, w), cbind(t(w), v))} and \code{XX = rbind(X, x)}.  In this case the inputs to \code{lmn.suff} are \code{Y}, \code{V = VV} and \code{X = XX}. Please see vignette for mathematical details.
+#'
+#' When \code{npred > 0}, define the variables \code{Y_star = rbind(Y, y)}, \code{X_star = rbind(X, x)}, and \code{V_star = rbind(cbind(V, w), cbind(t(w), v))}.  Then \code{lmn.suff} calculates summary statistics required to estimate the conditional distribution
+#' \deqn{
+#' p(\boldsymbol{y} \mid \boldsymbol{Y}, \boldsymbol{X}_\star, \boldsymbol{V}_\star, \boldsymbol{B}, \boldsymbol{\Sigma}).
+#' }{
+#' p(y | Y, X_star, V_star, B, \Sigma).
+#' }
+#' The inputs to \code{lmn.suff} in this case are \code{Y = Y}, \code{X = X_star}, and \code{V = V_star}.
 #'
 #' @example examples/lmn-suff.R
 #' @export
@@ -208,3 +218,18 @@ lmn.suff <- function(Y, X, V, Vtype, npred = 0) {
 ##   Vp <- V[n+(1:npred),n+(1:npred),drop=FALSE]
 ##   list(IP = IP, ldV = ldV, Vp = Vp)
 ## }
+
+
+# \describe{
+#   \item{\code{Beta.hat}}{The \code{p x q} matrix \code{(t(X)V^{-1}X)^{-1}t(X)V^{-1}Y}, or \code{NULL} if \code{X = 0}.  The \eqn{p \times q}{p x q} matrix \eqn{\hat{\boldsymbol{B}} = (\boldsymbol{X}'\boldsymbol{V}^{-1}\boldsymbol{X})^{-1}\boldsymbol{X}'\boldsymbol{V}^{-1}\boldsymbol{Y}}{B_hat = (X'V^{-1}X)^{-1}X'V^{-1}Y}.}
+#   \item{\code{T}}{The \code{p x p} matrix \code{t(X)V^{-1}X}.}
+#   \item{\code{S}}{The \code{q x q} matrix \code{t(Y-X Beta.hat)V^{-1}(Y-X Beta.hat)}.}
+#   \item{\code{ldV}}{The scalar log-determinant of \code{V}.}
+#   \item{\code{n}, \code{p}, \code{q}}{The problem dimensions, namely \code{n = nrow(Y)}, \code{p = nrow(Beta)} (or \code{p = 0} if \code{X = 0}), and \code{q = ncol(Y)}.}
+# }
+# In addition, when \code{npred > 0} and with \code{x}, \code{w}, and \code{v} defined in \strong{Details}:
+# \describe{
+#   \item{\code{Ap}}{The \code{npred x q} matrix \code{t(w)V^{-1}Y}.}
+#   \item{\code{Xp}}{The \code{npred x p} matrix \code{x - t(w)V^{-1}X}.}
+#   \item{\code{Vp}}{The scalar \code{v - t(w)V^{-1}w}.}
+# }

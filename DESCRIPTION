@@ -6,8 +6,6 @@ Date: 2019-03-26
 Authors@R: c(person("Martin", "Lysy",
                     email = "mlysy@uwaterloo.ca", role = c("aut", "cre")),
              person("Bryan", "Yates", role = "aut"))
-Author: Martin Lysy
-Maintainer: Martin Lysy <mlysy@uwaterloo.ca>
 Description: Efficient Frequentist profiling and Bayesian marginalization of parameters for which the conditional likelihood is that of a multivariate linear regression model.  While optimal inter-observation error correlations are support, optimized calculations are provided for independent-heteroskedastic and stationary dependence structures.
 License: GPL-3
 Imports:
