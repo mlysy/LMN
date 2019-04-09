@@ -16,11 +16,11 @@ lmn.suff(Y, X, V, Vtype, npred = 0)
 }}
 
 \item{V, Vtype}{The between-observation variance specification.  Currently the following options are supported:
-\enumerate{
+\itemize{
   \item \code{Vtype = "full"}: \code{V} is an \code{N x N} symmetric positive-definite matrix.
   \item \code{Vtype = "diag"}: \code{V} is a vector of length \code{N} such that \code{V = diag(V)}.
   \item \code{Vtype = "scalar"}: \code{V} is a scalar such that \code{V = V * diag(N)}.
-  \item \code{Vtype = "acf"}: \code{V} is either a vector of length \code{N}, or an object of class \code{Toeplitz} such that \code{V = toeplitz(V)}.
+  \item \code{Vtype = "acf"}: \code{V} is either a vector of length \code{N}, or an object of class \code{\link[SuperGauss]{Toeplitz}} such that \code{V = toeplitz(V)}.
 }
 For \code{V} specified as a matrix or scalar, \code{Vtype} is deduced automatically and need not be specified.}
 

@@ -1,17 +1,19 @@
 Package: LMN
 Type: Package
-Title: Inference for (L)inear (M)odels with (N)uisance Parameters
+Title: Inference for Linear Models with Nuisance Parameters
 Version: 0.0.1.9001
 Date: 2019-03-26
 Authors@R: c(person("Martin", "Lysy",
                     email = "mlysy@uwaterloo.ca", role = c("aut", "cre")),
              person("Bryan", "Yates", role = "aut"))
-Description: Efficient Frequentist profiling and Bayesian marginalization of parameters for which the conditional likelihood is that of a multivariate linear regression model.  While optimal inter-observation error correlations are support, optimized calculations are provided for independent-heteroskedastic and stationary dependence structures.
+Description: Efficient Frequentist profiling and Bayesian marginalization of parameters for which the conditional likelihood is that of a multivariate linear regression model.  Arbitrary inter-observation error correlations are supported, with optimized calculations provided for independent-heteroskedastic and stationary dependence structures.
+URL: https://github.com/mlysy/LMN/
+BugReports: https://github.com/mlysy/LMN/issues
 License: GPL-3
 Imports:
     Rcpp (>= 0.12.4.4), SuperGauss, stats
 LinkingTo: Rcpp, RcppEigen
 Encoding: UTF-8
 RoxygenNote: 6.1.1
-Suggests: testthat, numDeriv, knitr, rmarkdown
+Suggests: testthat, numDeriv, knitr, rmarkdown, kableExtra
 VignetteBuilder: knitr

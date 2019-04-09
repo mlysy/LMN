@@ -1,4 +1,4 @@
-#' Tools for (L)inear (M)odels with (N)uisance Parameters.
+#' Inference for Linear Models with Nuisance Parameters.
 #'
 #' Efficient profile likelihood and marginal posteriors when nuisance parameters are those of linear regression models.
 #'
