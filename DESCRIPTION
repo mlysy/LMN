@@ -10,6 +10,7 @@ Description: Efficient Frequentist profiling and Bayesian marginalization of par
 URL: https://github.com/mlysy/LMN/
 BugReports: https://github.com/mlysy/LMN/issues
 License: GPL-3
+Depends: mniw
 Imports:
     Rcpp (>= 0.12.4.4), SuperGauss, stats
 LinkingTo: Rcpp, RcppEigen

@@ -23,5 +23,7 @@ lmn.loglik <- function(Beta, Sigma, suff) {
     Z <- Beta-Bhat
     S <- S + crossprod(Z, T %*% Z)
   }
-  -0.5 * (sum(diag(solveV(Sigma,S))) + q*ldV + n*ldet(Sigma) + n*q * log(2*pi))
+  IP <- solveV(Sigma, S, ldV = TRUE)
+  -0.5 * (sum(diag(IP$y)) + q*ldV + n*IP$ldV + n*q * log(2*pi))
+  ## -0.5 * (sum(diag(solveV(Sigma,S))) + q*ldV + n*ldet(Sigma) + n*q * log(2*pi))
 }

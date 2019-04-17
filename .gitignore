@@ -6,3 +6,5 @@ doc
 *.so
 *.DS_Store
 inst/doc
+vignettes/LMN_cache
+vignettes/LMN_files

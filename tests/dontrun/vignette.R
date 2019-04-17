@@ -122,6 +122,137 @@ disp <- rbind(true = c(alpha, lambda, t(Beta), cov2sigrho(Sigma)),
               se = Theta_se)
 
 
+#--- gcir example --------------------------------------------------------------
+
+gcir_sim <- function(N, dt, Theta, x0) {
+  # parameters
+  gamma <- Theta[1]
+  mu <- Theta[2]
+  sigma <- Theta[3]
+  lambda <- Theta[4]
+  Rt <- rep(NA, N+1)
+  Rt[1] <- x0
+  for(ii in 1:N) {
+    Rt[ii+1] <- rnorm(1, mean = Rt[ii] - gamma * (Rt[ii] - mu) * dt,
+                      sd = sigma * Rt[ii]^lambda * sqrt(dt))
+  }
+  Rt
+}
+
+gcir_suff <- function(lambda) {
+  lmn.suff(Y = Y, X = X,
+           V = exp(lambda * lR2) * dt, Vtype = "diag")
+}
+
+gcir_prof <- function(lambda) {
+  if(lambda <= 0) return(Inf)
+  -lmn.prof(suff = gcir_suff(lambda))
+}
+
+plot(Rt)
+
+
+# plausible values for gcir model (Ait-Sahalia 1999)
+#gamma <- .0876
+#mu <- .0844
+#sigma <- .7791
+#beta <- 1.48
+
+#deltat <- 1/12
+#N <- (98-63+1)*12
+
+Theta <- c(gamma = .07, mu = .01, sigma = .6, lambda = .9)
+dt <- 1/12
+N <- 12 * 20
+
+
+set.seed(7)
+# simulate data
+Rt <- gcir_sim(N = N, dt = dt, Theta = Theta, x0 = Theta["mu"])
+anyNA(Rt)
+# precompute these
+Y <- matrix(diff(Rt))
+X <- cbind(-Rt[1:N], 1) * dt
+# since Rt^(2*lambda) is calculated as exp(2*lambda * log(Rt)),
+# precompute 2*log(Rt) to speed up calculations
+lR2 <- 2 * log(Rt[1:N])
+opt <- optimize(f = gcir_prof,
+                interval = c(.001, 10))
+lambda_mle <- opt$minimum
+suff <- gcir_suff(lambda_mle)
+suff$Bhat
+
+# posterior inference
+prior <- lmn.prior(p = 2, q = 1)
+
+gcir_marg <- function(lambda) {
+  suff <- gcir_suff(lambda)
+  post <- lmn.post(suff, prior)
+  lmn.marg(suff = suff, prior = prior, post = post)
+}
+
+lambda_mode <- optimize(f = gcir_marg,
+                        interval = c(.01, 10),
+                        maximum = TRUE)$maximum
+lambda_quad <- -numDeriv::hessian(func = gcir_marg, x = lambda_mode)[1]
+lambda_rng <- lambda_mode + c(-5,5) * 1/sqrt(lambda_quad)
+
+npts <- 1000
+lambda_seq <- seq(lambda_rng[1], lambda_rng[2], len = npts)
+lambda_lpdf <- sapply(lambda_seq, gcir_marg)
+lambda_pdf <- exp(lambda_lpdf - max(lambda_lpdf))
+lambda_pdf <- lambda_pdf / sum(lambda_pdf) / (lambda_seq[2]-lambda_seq[1])
+
+plot(lambda_seq, lambda_pdf, type = "l")
+
+npost <- 5e4 # number of posterior draws
+
+# marginal sampling from p(lambda | R)
+lambda_post <- sample(lambda_seq, size = npost, prob = lambda_pdf,
+                      replace = TRUE)
+
+# conditional sampling from p(B, Sigma | lambda, R)
+BSig_post <- lapply(lambda_post, function(lambda) {
+  lmn.post(gcir_suff(lambda), prior)
+})
+BSig_post <- list2mniw(BSig_post) # convert to vectorized mniw format
+BSig_post <- mniw::rmniw(npost,
+                          Lambda = BSig_post$Lambda,
+                          Omega = BSig_post$Omega,
+                          Psi = BSig_post$Psi,
+                          nu = BSig_post$nu)
+# convert to Theta = (gamma, mu, sigma, lambda)
+Theta_post <- cbind(gamma = BSig_post$X[1,1,],
+                    mu = BSig_post$X[2,1,]/BSig_post$X[1,1,],
+                    sigma = sqrt(BSig_post$V[1,1,]),
+                    lambda = lambda_post)
+
+
+# keep only draws for which gamma, mu > 0
+ikeep <- pmin(Theta_post[,1], Theta_post[,2]) > 0
+Theta_post <- Theta_post[ikeep,]
+# convert mu to log scale for plotting purposes
+Theta_post[,"mu"] <- log10(Theta_post[,"mu"])
+
+# posterior distributions and true parameter values
+Theta_names <- c("gamma", "log[10](mu)", "sigma", "lambda")
+Theta_true <- Theta
+Theta_true["mu"] <- log10(Theta_true["mu"])
+par(mfrow = c(2,2), mar = c(2,2,3,.5)+.5)
+for(ii in 1:ncol(Theta_post)) {
+  hist(Theta_post[,ii], breaks = 40, freq = FALSE,
+       xlab = "", ylab = "",
+       main = parse(text = paste0("p(",
+                                  Theta_names[ii], "*\" | \"*bold(R))")))
+  abline(v = Theta_true[ii], col = "red", lwd = 2)
+  if(ii == 1) {
+    legend("topright", inset = .05,
+           legend = c("Posterior Distribution", "True Parameter Value"),
+           lwd = c(NA, 2), pch = c(22, NA), seg.len = 1.5,
+           col = c("black", "red"), bg = c("white", NA), cex = .85)
+  }
+}
+
 #--- fbm example ----------------------------------------------------------
 
 
@@ -227,3 +358,4 @@ fbm_nll <- function(theta) {
 theta_mle <- c(alpha_mle, mu_mle, eta_mle,
                sqrt(Sigma_mle[1,1]), sqrt(Sigma_mle[2,2]),
                Sigma_mle[1,2]/sqrt(Sigma_mle[1,1]*Sigma_mle[2,2]))
+

@@ -1,8 +1,41 @@
-# Wrapper for the log-determinant of a matrix
-# @param V A square matrix.
+#' Convert list of MNIW parameter lists to vectorized format.
+#'
+#' Converts a list of return values of multiple calls to \code{\link{lmn.prior}} or \code{\link{lmn.post}} to a single list of MNIW parameters, which can then serve as vectorized arguments to the functions in \pkg{mniw}.
+#'
+#' @param x List of \code{n} MNIW parameter lists.
+#' @return A list with the following elements:
+#' \describe{
+#'   \item{\code{Lambda}}{The mean matrices as an array of size \code{p x p x n}.}
+#'   \item{\code{Omega}}{The between-row precision matrices, as an array of size \code{p x p x }.}
+#'   \item{\code{Psi}}{The between-column scale matrices, as an array of size \code{q x q x n}.}
+#'   \item{\code{nu}}{The degrees-of-freedom parameters, as a vector of length \code{n}.}
+#' }
+#' @export
+list2mniw <- function(x) {
+  # problem dimensions
+  p <- nrow(x[[1]]$Lambda)
+  q <- ncol(x[[1]]$Lambda)
+  n <- length(x)
+  nLambda <- p*q
+  nOmega <- p*p
+  nPsi <- q*q
+  # unlist to matrix
+  x <- matrix(unlist(x, recursive = TRUE),
+              nrow = nLambda+nOmega+nPsi+1, ncol = n)
+  # relist in correct format
+  list(Lambda = array(x[1:nLambda,], dim = c(p,q,n)),
+       Omega = array(x[nLambda+1:nOmega,], dim = c(p,p,n)),
+       Psi = array(x[nLambda+nOmega+1:nPsi,], dim = c(q,q,n)),
+       nu = x[nLambda+nOmega+nPsi+1,])
+}
+
+
+# Log-determinant of a variance matrix
+# @param V A variance matrix.
 # @return The log-determinant \code{log(det(V))}.
 ldet <- function(V) {
-  determinant(V, logarithm = TRUE)$mod[1]
+  ## determinant(V, logarithm = TRUE)$mod[1]
+  solveV(V, x = rep(1, nrow(V)), ldV = TRUE)$ldV
 }
 
 # Log of Multi-Gamma Function
