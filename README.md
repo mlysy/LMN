@@ -10,7 +10,7 @@ Efficient Frequentist profiling and Bayesian marginalization of parameters for w
 
 ### Installation
 
-Install the R package [devtools](https://CRAN.R-project.org/package=devtools) and run
+Install the R package [**devtools**](https://CRAN.R-project.org/package=devtools) and run
 ```r
 devtools::install_github("mlysy/LMN")
 ```
