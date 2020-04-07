@@ -12,12 +12,12 @@ list2mniw(x)
 \value{
 A list with the following elements:
 \describe{
-  \item{\code{Lambda}}{The mean matrices as an array of size \code{p x p x n}.}
-  \item{\code{Omega}}{The between-row precision matrices, as an array of size \code{p x p x }.}
-  \item{\code{Psi}}{The between-column scale matrices, as an array of size \code{q x q x n}.}
-  \item{\code{nu}}{The degrees-of-freedom parameters, as a vector of length \code{n}.}
+\item{\code{Lambda}}{The mean matrices as an array of size \verb{p x p x n}.}
+\item{\code{Omega}}{The between-row precision matrices, as an array of size \verb{p x p x }.}
+\item{\code{Psi}}{The between-column scale matrices, as an array of size \verb{q x q x n}.}
+\item{\code{nu}}{The degrees-of-freedom parameters, as a vector of length \code{n}.}
 }
 }
 \description{
-Converts a list of return values of multiple calls to \code{\link{lmn.prior}} or \code{\link{lmn.post}} to a single list of MNIW parameters, which can then serve as vectorized arguments to the functions in \pkg{mniw}.
+Converts a list of return values of multiple calls to \code{\link[=lmn_prior]{lmn_prior()}} or \code{\link[=lmn_post]{lmn_post()}} to a single list of MNIW parameters, which can then serve as vectorized arguments to the functions in \pkg{mniw}.
 }

@@ -1,1 +1,1 @@
-#' @param suff An object of class \code{lmn_suff} (see \code{\link{lmn.suff}}).
+#' @param suff An object of class `lmn_suff` (see [lmn_suff()]).

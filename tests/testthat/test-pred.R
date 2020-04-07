@@ -46,11 +46,11 @@ test_that("Prediction statistics are correctly computed.", {
       VR <- toeplitz(acf)
       VV <- VR
     }
-    # calculate with lmn.suff
+    # calculate with lmn_suff
     if(Vtype == "acf") {
-      suff <- lmn.suff(Y = Y, X = XX, V = acf, Vtype = Vtype, npred = npred)
+      suff <- lmn_suff(Y = Y, X = XX, V = acf, Vtype = Vtype, npred = npred)
     } else {
-      suff <- lmn.suff(Y = Y, X = XX, V = VV, Vtype = Vtype, npred = npred)
+      suff <- lmn_suff(Y = Y, X = XX, V = VV, Vtype = Vtype, npred = npred)
     }
     # calculate in R
     X <- XR[1:n,,drop = FALSE]

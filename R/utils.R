@@ -1,14 +1,15 @@
 #' Convert list of MNIW parameter lists to vectorized format.
 #'
-#' Converts a list of return values of multiple calls to \code{\link{lmn.prior}} or \code{\link{lmn.post}} to a single list of MNIW parameters, which can then serve as vectorized arguments to the functions in \pkg{mniw}.
+#' Converts a list of return values of multiple calls to [lmn_prior()] or [lmn_post()] to a single list of MNIW parameters, which can then serve as vectorized arguments to the functions in \pkg{mniw}.
 #'
-#' @param x List of \code{n} MNIW parameter lists.
+#' @param x List of `n` MNIW parameter lists.
+#'
 #' @return A list with the following elements:
 #' \describe{
-#'   \item{\code{Lambda}}{The mean matrices as an array of size \code{p x p x n}.}
-#'   \item{\code{Omega}}{The between-row precision matrices, as an array of size \code{p x p x }.}
-#'   \item{\code{Psi}}{The between-column scale matrices, as an array of size \code{q x q x n}.}
-#'   \item{\code{nu}}{The degrees-of-freedom parameters, as a vector of length \code{n}.}
+#'   \item{`Lambda`}{The mean matrices as an array of size `p x p x n`.}
+#'   \item{`Omega`}{The between-row precision matrices, as an array of size `p x p x `.}
+#'   \item{`Psi`}{The between-column scale matrices, as an array of size `q x q x n`.}
+#'   \item{`nu`}{The degrees-of-freedom parameters, as a vector of length `n`.}
 #' }
 #' @export
 list2mniw <- function(x) {
@@ -30,20 +31,26 @@ list2mniw <- function(x) {
 }
 
 
-# Log-determinant of a variance matrix
-# @param V A variance matrix.
-# @return The log-determinant \code{log(det(V))}.
+#' Log-determinant of a variance matrix
+#'
+#' @param V A variance matrix.
+#' @return The log-determinant `log(det(V))`.
+#' @noRd
 ldet <- function(V) {
   ## determinant(V, logarithm = TRUE)$mod[1]
   solveV(V, x = rep(1, nrow(V)), ldV = TRUE)$ldV
 }
 
-# Log of Multi-Gamma Function
+#' Log of multi-gamma function.
+#'
+#' @noRd
 lmgamma <- function(x, p) {
   p*(p-1)/4 * log(pi) + sum(lgamma(x + (1-1:p)/2))
 }
 
-# Non-Symmetric Toeplitz Matrix
+#' Non-symmetric Toeplitz matrix.
+#'
+#' @noRd
 toeplitz2 <- function(col, row, debug = FALSE) {
   # dimensions
   n <- length(col)
@@ -60,10 +67,14 @@ toeplitz2 <- function(col, row, debug = FALSE) {
   T
 }
 
-# names of prior
+#' Names of prior
+#'
+#' @noRd
 .PriorNames <- sort(c("Lambda", "Omega", "Psi", "nu"))
 
-# Default prior specification
+#' Default prior specification
+#'
+#' @noRd
 .DefaultPrior <- function(prior, p, q, noSigma) {
   noBeta <- p == 0
   # extract elements
@@ -95,13 +106,15 @@ toeplitz2 <- function(col, row, debug = FALSE) {
   list(Lambda = Lambda, Omega = Omega, Psi = Psi, nu = nu)
 }
 
-# Solve method for variance matrices.
-#
-# @param V Variance matrix
-# @param x Optional vector or matrix for which to solve system of equations.  If missing calculates inverse matrix.
-# @param ldV Optionally compute log determinant as well.
-# @return Matrix solving system of equations and optionally the log-determinant.
-# @details This function is faster and more stable than \code{solve} when \code{V} is known to be positive-definite.
+#' Solve method for variance matrices.
+#'
+#' @param V Variance matrix
+#' @param x Optional vector or matrix for which to solve system of equations.  If missing calculates inverse matrix.
+#' @param ldV Optionally compute log determinant as well.
+#' @return Matrix solving system of equations and optionally the log-determinant.
+#' @details This function is faster and more stable than `solve` when `V` is known to be positive-definite.
+#'
+#' @noRd
 solveV <- function(V, x, ldV = FALSE) {
   C <- chol(V)
   if(missing(x)) x <- diag(nrow(V))

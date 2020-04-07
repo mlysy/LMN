@@ -110,17 +110,17 @@ test_that("Lik * Prior = Marg * Cond.", {
     } else {
       Data <- list(Y = Y, X = XX, V = VV, Vtype = Vtype)
     }
-    suff <- do.call(lmn.suff, args = Data)
+    suff <- do.call(lmn_suff, args = Data)
     if(noPrior) {
-      prior <- lmn.prior(p = suff$p, q = suff$q, nu = ifelse(noSigma, NA, 0))
+      prior <- lmn_prior(p = suff$p, q = suff$q, nu = ifelse(noSigma, NA, 0))
     } else {
-      prior <- do.call(lmn.prior, c(list(p = suff$p, q = suff$q), prior))
+      prior <- do.call(lmn_prior, c(list(p = suff$p, q = suff$q), prior))
     }
-    ## if(noPrior) prior <- lmn.prior(suff, nu = noSigma)
-    ## prior2 <- lmn.prior(suff, nu = noSigma)
-    ## post2 <- lmn.post(suff, prior = prior2)
-    post <- lmn.post(suff, prior = prior)
-    lpm <- lmn.marg(suff, prior = prior, post = post)
+    ## if(noPrior) prior <- lmn_prior(suff, nu = noSigma)
+    ## prior2 <- lmn_prior(suff, nu = noSigma)
+    ## post2 <- lmn_post(suff, prior = prior2)
+    post <- lmn_post(suff, prior = prior)
+    lpm <- lmn_marg(suff, prior = prior, post = post)
     lpc <- lMNIW(Beta, Sigma,
                  post$Lambda, post$Omega, post$Psi, post$nu)
     # smallest of relative and absolute error

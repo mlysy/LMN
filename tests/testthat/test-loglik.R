@@ -48,11 +48,11 @@ test_that("Loglikelihood with precomputations is same as long form.", {
       VR <- VV
     }
     # get sufficient statistics
-    ## suff <- lmn.suff(Y = Y, X = XX, V = VV, Vtype = Vtype)
+    ## suff <- lmn_suff(Y = Y, X = XX, V = VV, Vtype = Vtype)
     if(Vtype == "acf") {
-      suff <- lmn.suff(Y = Y, X = XX, V = acf, Vtype = Vtype)
+      suff <- lmn_suff(Y = Y, X = XX, V = acf, Vtype = Vtype)
     } else {
-      suff <- lmn.suff(Y = Y, X = XX, V = VV, Vtype = Vtype)
+      suff <- lmn_suff(Y = Y, X = XX, V = VV, Vtype = Vtype)
     }
     # full loglikelihood
     if(!noBeta) {
@@ -69,7 +69,7 @@ test_that("Loglikelihood with precomputations is same as long form.", {
     }
     llR <- lMnorm(X = Y, Mu = Mu, RowV = VR, ColV = Sigma)
     # calculate with LMN
-    lls <- lmn.loglik(Beta = Beta, Sigma = Sigma,
+    lls <- lmn_loglik(Beta = Beta, Sigma = Sigma,
                       suff = suff)
     if(calc.diff) {
       MaxDiff[ii] <- abs(llR - lls)

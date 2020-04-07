@@ -4,9 +4,9 @@ q <- 3
 Y <- matrix(rnorm(n*q),n,q) # response matrix
 X <- 1 # intercept covariate
 V <- 0.5 # scalar variance specification
-suff <- lmn.suff(Y, X = X, V = V) # sufficient statistics
+suff <- lmn_suff(Y, X = X, V = V) # sufficient statistics
 
 # calculate loglikelihood
 Beta <- matrix(rnorm(q),1,q)
 Sigma <- diag(rexp(q))
-lmn.loglik(Beta = Beta, Sigma = Sigma, suff = suff)
+lmn_loglik(Beta = Beta, Sigma = Sigma, suff = suff)

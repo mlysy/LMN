@@ -17,4 +17,4 @@ devtools::install_github("mlysy/LMN")
 
 ### Usage
 
-Please see package vignette: `vignette("LMN")`.
+Please see package vignette [here](http://htmlpreview.github.io/?https://github.com/mlysy/LMN/master/doc/LMN.html).

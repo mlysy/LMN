@@ -1,33 +1,34 @@
 #' Calculate the sufficient statistics of an LMN model.
 #'
-#' @param Y An \code{n x q} matrix of responses.
-#' @param X An \code{N x p} matrix of covariates, where \code{N = n + npred} (see \strong{Details}). May also be passed as:
-#' \itemize{
-#'   \item A scalar, in which case the one-column covariate matrix is \code{X = X * matrix(1, N, 1)}.
-#'   \item \code{X = 0}, in which case the mean of \code{Y} is known to be zero, i.e., no regression coefficients are estimated.
-#' }
+#' @param Y An `n x q` matrix of responses.
+#' @param X An `N x p` matrix of covariates, where `N = n + npred` (see **Details**). May also be passed as:
+#'
+#' - A scalar, in which case the one-column covariate matrix is `X = X * matrix(1, N, 1)`.
+#' -`X = 0`, in which case the mean of `Y` is known to be zero, i.e., no regression coefficients are estimated.
+#'
 #' @param V,Vtype The between-observation variance specification.  Currently the following options are supported:
-#' \itemize{
-#'   \item \code{Vtype = "full"}: \code{V} is an \code{N x N} symmetric positive-definite matrix.
-#'   \item \code{Vtype = "diag"}: \code{V} is a vector of length \code{N} such that \code{V = diag(V)}.
-#'   \item \code{Vtype = "scalar"}: \code{V} is a scalar such that \code{V = V * diag(N)}.
-#'   \item \code{Vtype = "acf"}: \code{V} is either a vector of length \code{N}, or an object of class \code{\link[SuperGauss]{Toeplitz}} such that \code{V = toeplitz(V)}.
-#' }
-#' For \code{V} specified as a matrix or scalar, \code{Vtype} is deduced automatically and need not be specified.
-#' @param npred A nonnegative integer.  If positive, calculates sufficient statistics to make predictions for new responses. See \strong{Details}.
-#' @return An S3 object of type \code{lmn_suff}, consisting of a list with elements:
+#'
+#' - `Vtype = "full"`: `V` is an `N x N` symmetric positive-definite matrix.
+#' - `Vtype = "diag"`: `V` is a vector of length `N` such that `V = diag(V)`.
+#' - `Vtype = "scalar"`: `V` is a scalar such that `V = V * diag(N)`.
+#' - `Vtype = "acf"`: `V` is either a vector of length `N`, or an object of class [`SuperGauss::Toeplitz`] such that `V = toeplitz(V)`.
+#'
+#' For `V` specified as a matrix or scalar, `Vtype` is deduced automatically and need not be specified.
+#' @param npred A nonnegative integer.  If positive, calculates sufficient statistics to make predictions for new responses. See **Details**.
+#'
+#' @return An S3 object of type `lmn_suff`, consisting of a list with elements:
 #' \describe{
-#'   \item{\code{Bhat}}{The \eqn{p \times q}{p x q} matrix \eqn{\hat{\boldsymbol{B}} = (\boldsymbol{X}'\boldsymbol{V}^{-1}\boldsymbol{X})^{-1}\boldsymbol{X}'\boldsymbol{V}^{-1}\boldsymbol{Y}}{B_hat = (X'V^{-1}X)^{-1}X'V^{-1}Y}.}
-#'   \item{\code{T}}{The \eqn{p \times p}{p x p} matrix \eqn{\boldsymbol{T} = \boldsymbol{X}'\boldsymbol{V}^{-1}\boldsymbol{X}}{T = X'V^{-1}X}.}
-#'   \item{\code{S}}{The \eqn{q \times q}{q x q} matrix \eqn{\boldsymbol{S} = (\boldsymbol{Y} - \boldsymbol{X} \hat{\boldsymbol{B}})'\boldsymbol{V}^{-1}(\boldsymbol{Y} - \boldsymbol{X} \hat{\boldsymbol{B}})}{S = (Y-X B_hat)'V^{-1}(Y-X B_hat)}.}
-#'   \item{\code{ldV}}{The scalar log-determinant of \code{V}.}
-#'   \item{\code{n}, \code{p}, \code{q}}{The problem dimensions, namely \code{n = nrow(Y)}, \code{p = nrow(Beta)} (or \code{p = 0} if \code{X = 0}), and \code{q = ncol(Y)}.}
+#'   \item{`Bhat`}{The \eqn{p \times q}{p x q} matrix \eqn{\hat{\boldsymbol{B}} = (\boldsymbol{X}'\boldsymbol{V}^{-1}\boldsymbol{X})^{-1}\boldsymbol{X}'\boldsymbol{V}^{-1}\boldsymbol{Y}}{B_hat = (X'V^{-1}X)^{-1}X'V^{-1}Y}.}
+#'   \item{`T`}{The \eqn{p \times p}{p x p} matrix \eqn{\boldsymbol{T} = \boldsymbol{X}'\boldsymbol{V}^{-1}\boldsymbol{X}}{T = X'V^{-1}X}.}
+#'   \item{`S`}{The \eqn{q \times q}{q x q} matrix \eqn{\boldsymbol{S} = (\boldsymbol{Y} - \boldsymbol{X} \hat{\boldsymbol{B}})'\boldsymbol{V}^{-1}(\boldsymbol{Y} - \boldsymbol{X} \hat{\boldsymbol{B}})}{S = (Y-X B_hat)'V^{-1}(Y-X B_hat)}.}
+#'   \item{`ldV`}{The scalar log-determinant of `V`.}
+#'   \item{`n`, `p`, `q`}{The problem dimensions, namely `n = nrow(Y)`, `p = nrow(Beta)` (or `p = 0` if `X = 0`), and `q = ncol(Y)`.}
 #' }
-#' In addition, when \code{npred > 0} and with \eqn{\boldsymbol{x}}{x}, \eqn{\boldsymbol{w}}{w}, and \eqn{v} defined in \strong{Details}:
+#' In addition, when `npred > 0` and with \eqn{\boldsymbol{x}}{x}, \eqn{\boldsymbol{w}}{w}, and \eqn{v} defined in **Details**:
 #' \describe{
-#'   \item{\code{Ap}}{The \code{npred x q} matrix \eqn{\boldsymbol{A}_p = \boldsymbol{w}'\boldsymbol{V}^{-1}\boldsymbol{Y}}{A_p = w'V^{-1}Y}.}
-#'   \item{\code{Xp}}{The \code{npred x p} matrix \eqn{\boldsymbol{X}_p = \boldsymbol{x} - \boldsymbol{w}\boldsymbol{V}^{-1}\boldsymbol{X}}{X_p = x - w'V^{-1}X}.}
-#'   \item{\code{Vp}}{The scalar \eqn{V_p = v - \boldsymbol{w}\boldsymbol{V}^{-1}\boldsymbol{w}}{V_p = v - w'V^{-1}w}.}
+#'   \item{`Ap`}{The `npred x q` matrix \eqn{\boldsymbol{A}_p = \boldsymbol{w}'\boldsymbol{V}^{-1}\boldsymbol{Y}}{A_p = w'V^{-1}Y}.}
+#'   \item{`Xp`}{The `npred x p` matrix \eqn{\boldsymbol{X}_p = \boldsymbol{x} - \boldsymbol{w}\boldsymbol{V}^{-1}\boldsymbol{X}}{X_p = x - w'V^{-1}X}.}
+#'   \item{`Vp`}{The scalar \eqn{V_p = v - \boldsymbol{w}\boldsymbol{V}^{-1}\boldsymbol{w}}{V_p = v - w'V^{-1}w}.}
 #' }
 #'
 #' @details
@@ -45,23 +46,23 @@
 #' }
 #' where \eqn{\textrm{vec}(\boldsymbol{Y})}{vec(Y)} is a vector of length \eqn{nq} stacking the columns of of \eqn{\boldsymbol{Y}}{Y}, and \eqn{\boldsymbol{\Sigma} \otimes \boldsymbol{V}}{\Sigma \%x\% V} is the Kronecker product.
 #'
-#' The function \code{lmn.suff} returns everything needed to efficiently calculate the likelihood function
+#' The function `lmn.suff` returns everything needed to efficiently calculate the likelihood function
 #' \deqn{\mathcal{L}(\boldsymbol{B}, \boldsymbol{\Sigma} \mid \boldsymbol{Y}, \boldsymbol{X}, \boldsymbol{V}) = p(\boldsymbol{Y} \mid \boldsymbol{X}, \boldsymbol{V}, \boldsymbol{B}, \boldsymbol{\Sigma}).
 #' }{
 #' L(B, \Sigma | Y, X, V) = p(Y | X, V, B, \Sigma).
 #' }
 #'
-#' When \code{npred > 0}, define the variables \code{Y_star = rbind(Y, y)}, \code{X_star = rbind(X, x)}, and \code{V_star = rbind(cbind(V, w), cbind(t(w), v))}.  Then \code{lmn.suff} calculates summary statistics required to estimate the conditional distribution
+#' When `npred > 0`, define the variables `Y_star = rbind(Y, y)`, `X_star = rbind(X, x)`, and `V_star = rbind(cbind(V, w), cbind(t(w), v))`.  Then `lmn.suff` calculates summary statistics required to estimate the conditional distribution
 #' \deqn{
 #' p(\boldsymbol{y} \mid \boldsymbol{Y}, \boldsymbol{X}_\star, \boldsymbol{V}_\star, \boldsymbol{B}, \boldsymbol{\Sigma}).
 #' }{
 #' p(y | Y, X_star, V_star, B, \Sigma).
 #' }
-#' The inputs to \code{lmn.suff} in this case are \code{Y = Y}, \code{X = X_star}, and \code{V = V_star}.
+#' The inputs to `lmn.suff` in this case are `Y = Y`, `X = X_star`, and `V = V_star`.
 #'
-#' @example examples/lmn-suff.R
+#' @example examples/lmn_suff.R
 #' @export
-lmn.suff <- function(Y, X, V, Vtype, npred = 0) {
+lmn_suff <- function(Y, X, V, Vtype, npred = 0) {
   # dimensions of the problem
   n <- nrow(Y)
   q <- ncol(Y)
@@ -105,8 +106,8 @@ lmn.suff <- function(Y, X, V, Vtype, npred = 0) {
     ldV <- DL$ldV
   } else if(Vtype == "Toeplitz") {
     Tz <- V
-    IP <- crossprod(Z, solve(Tz, Z))
-    ldV <- determinant(Tz, logarithm = TRUE)
+    IP <- crossprod(Z, V$solve(Z))
+    ldV <- Tz$log_det()
   } else {
     stop("Unrecognized variance type.")
   }
@@ -152,7 +153,7 @@ lmn.suff <- function(Y, X, V, Vtype, npred = 0) {
   ans
 }
 
-# helper functions
+#--- helper functions ----------------------------------------------------------
 
 .get_Vtype <- function(V, Vtype, n, npred) {
   N <- n + npred
@@ -179,7 +180,7 @@ lmn.suff <- function(Y, X, V, Vtype, npred = 0) {
         Vtype <- "full"
       }
     }
-  } else if(class(V) == "Toeplitz" && nrow(V) == N) {
+  } else if(SuperGauss::is.Toeplitz(V) && nrow(V) == N) {
     if(!missing(Vtype) && Vtype != "acf") {
       stop("Incompatible V and Vtype.")
     } else {
@@ -195,41 +196,3 @@ lmn.suff <- function(Y, X, V, Vtype, npred = 0) {
   }
   Vtype
 }
-
-## lmn.suff.full <- function(Y, X, V, npred) {
-##   # dimensions of the problem
-##   n <- nrow(Y)
-##   q <- ncol(Y)
-##   N <- n+npred
-##   noBeta <- all(X == 0)
-##   p <- (!noBeta) * ncol(X)
-##   # inner product calculations
-##   Z <- matrix(0, n, q+p+npred)
-##   Z[,1:q] <- Y
-##   if(!noBeta) Z[,q+(1:p)] <- X[1:n,]
-##   C <- chol(V[1:n,1:n])
-##   if(npred > 0) {
-##     Z[,q+p+(1:npred)] <- V[1:n,n+(1:npred)]
-##   }
-##   # IP' * V^{-1} * IP
-##   IP <- crossprod(backsolve(r = C, x = Z, transpose = TRUE))
-##   # log|V|
-##   ldV <- 2 * sum(log(diag(C)))
-##   Vp <- V[n+(1:npred),n+(1:npred),drop=FALSE]
-##   list(IP = IP, ldV = ldV, Vp = Vp)
-## }
-
-
-# \describe{
-#   \item{\code{Bhat}}{The \code{p x q} matrix \code{(t(X)V^{-1}X)^{-1}t(X)V^{-1}Y}, or \code{NULL} if \code{X = 0}.  The \eqn{p \times q}{p x q} matrix \eqn{\hat{\boldsymbol{B}} = (\boldsymbol{X}'\boldsymbol{V}^{-1}\boldsymbol{X})^{-1}\boldsymbol{X}'\boldsymbol{V}^{-1}\boldsymbol{Y}}{B_hat = (X'V^{-1}X)^{-1}X'V^{-1}Y}.}
-#   \item{\code{T}}{The \code{p x p} matrix \code{t(X)V^{-1}X}.}
-#   \item{\code{S}}{The \code{q x q} matrix \code{t(Y-X Bhat)V^{-1}(Y-X Bhat)}.}
-#   \item{\code{ldV}}{The scalar log-determinant of \code{V}.}
-#   \item{\code{n}, \code{p}, \code{q}}{The problem dimensions, namely \code{n = nrow(Y)}, \code{p = nrow(Beta)} (or \code{p = 0} if \code{X = 0}), and \code{q = ncol(Y)}.}
-# }
-# In addition, when \code{npred > 0} and with \code{x}, \code{w}, and \code{v} defined in \strong{Details}:
-# \describe{
-#   \item{\code{Ap}}{The \code{npred x q} matrix \code{t(w)V^{-1}Y}.}
-#   \item{\code{Xp}}{The \code{npred x p} matrix \code{x - t(w)V^{-1}X}.}
-#   \item{\code{Vp}}{The scalar \code{v - t(w)V^{-1}w}.}
-# }

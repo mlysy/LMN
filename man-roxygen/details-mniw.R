@@ -12,5 +12,5 @@
 #' }{
 #' B | \Sigma ~ Matrix-Normal(\Lambda, \Omega^{-1}, \Sigma),
 #' }
-#' where the Matrix-Normal distribution is defined in \code{\link{lmn.suff}}.
+#' where the Matrix-Normal distribution is defined in [lmn_suff()].
 #'

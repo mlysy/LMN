@@ -45,15 +45,15 @@ test_that("Sufficient statistics are correctly computed.", {
       VR <- toeplitz(acf)
       VV <- VR
     }
-    # calculate with lmn.suff
+    # calculate with lmn_suff
     if(Vtype == "acf") {
-      suff <- lmn.suff(Y = Y, X = XX, V = acf, Vtype = Vtype)
+      suff <- lmn_suff(Y = Y, X = XX, V = acf, Vtype = Vtype)
     } else if(Vtype == "Toeplitz") {
-      suff <- lmn.suff(Y = Y, X = XX, V = Toeplitz(acf = acf))
+      suff <- lmn_suff(Y = Y, X = XX, V = Toeplitz$new(acf = acf))
     } else if(Vtype == "diag") {
-      suff <- lmn.suff(Y = Y, X = XX, V = VV, Vtype = Vtype)
+      suff <- lmn_suff(Y = Y, X = XX, V = VV, Vtype = Vtype)
     } else {
-      suff <- lmn.suff(Y = Y, X = XX, V = VV)
+      suff <- lmn_suff(Y = Y, X = XX, V = VV)
     }
     # calculate in R
     X <- XR[1:n,,drop = FALSE]

@@ -5,6 +5,6 @@ doc
 *.dll
 *.so
 *.DS_Store
-inst/doc
-vignettes/LMN_cache
-vignettes/LMN_files
+
+# for github vignette
+!doc 

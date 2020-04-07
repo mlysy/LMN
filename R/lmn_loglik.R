@@ -1,12 +1,12 @@
 #' Loglikelihood function for LMN models.
 #'
-#' @param Beta A \code{p x q} matrix of regression coefficients (see \code{\link{lmn.suff}}).
-#' @param Sigma A \code{q x q} matrix of error variances (see \code{\link{lmn.suff}}).
+#' @param Beta A `p x q` matrix of regression coefficients (see [lmn_suff()]).
+#' @param Sigma A `q x q` matrix of error variances (see [lmn_suff()]).
 #' @template param-suff
-#' @return Scalar -- the value of the loglikelihood.
-#' @example examples/lmn-loglik.R
+#' @return Scalar; the value of the loglikelihood.
+#' @example examples/lmn_loglik.R
 #' @export
-lmn.loglik <- function(Beta, Sigma, suff) {
+lmn_loglik <- function(Beta, Sigma, suff) {
   if(class(suff) != "lmn_suff") {
     stop("suff must be an object of class 'lmn_suff'.")
   }

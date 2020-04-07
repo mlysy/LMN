@@ -50,9 +50,9 @@ test_that("Profile likelihood equals likelihood at MLE.", {
     }
     # get sufficient statistics
     if(Vtype == "acf") {
-      suff <- lmn.suff(Y = Y, X = XX, V = acf, Vtype = Vtype)
+      suff <- lmn_suff(Y = Y, X = XX, V = acf, Vtype = Vtype)
     } else {
-      suff <- lmn.suff(Y = Y, X = XX, V = VV, Vtype = Vtype)
+      suff <- lmn_suff(Y = Y, X = XX, V = VV, Vtype = Vtype)
     }
     # check profile likelihood
     # calculate long hand
@@ -70,7 +70,7 @@ test_that("Profile likelihood equals likelihood at MLE.", {
     }
     llR <- lMnorm(X = Y, Mu = Mu, RowV = VR, ColV = Sigma)
     # calculate with LMN
-    llp <- lmn.prof(suff = suff, noSigma = noSigma)
+    llp <- lmn_prof(suff = suff, noSigma = noSigma)
     if(calc.diff) {
       MaxDiff[ii] <- abs(llR - llp)
     } else {

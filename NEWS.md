@@ -1,3 +1,9 @@
+# LMN 1.1
+
+## Changes to interface
+
+* All `lmn.*()` functions converted to `lmn_*()`.
+
 # LMN 0.0.1.9001
 
 ## Changes to interface

@@ -26,13 +26,15 @@
 
 - [x] Short examples for all exported functions (i.e., having the `@export` keyword).  These go in a block called `@examples`.  Also, the main doc for the package (in the file `LMN.R`) should have an example.
 
-- [ ] Package vignette.  A basic walkthrough, typically using a specific example.  I'll get this started.
+- [x] Package vignette.  A basic walkthrough, typically using a specific example.  I'll get this started.
 
 - [x] Use documentation templates, i.e., `man-roxygen` and `examples`.
 
 - [x] Pass `lmn_suff` objects to other functions, instead of entire interface.
 
-- [ ] Replace "." by "_".  
+- [x] Replace "." by "_".  
+
+- [x] Convert roxygen documentation to Markdown formatting.
 
 - [x] Also, consider renaming `Beta.hat` to `Bhat`.
 
@@ -47,3 +49,5 @@
 - [ ] Translate to C++ :)
 
 - [x] Remove `old` files (under `git` version control anyways). 
+
+- [ ] Remove `src/DurbinLevison*` methods, and call them from **SuperGauss** instead.

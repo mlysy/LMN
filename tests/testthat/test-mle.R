@@ -48,11 +48,11 @@ test_that("Gradient = 0 at MLE.", {
       VV <- toeplitz(acf)
       VR <- VV
     }
-    # calculate with lmn.suff
+    # calculate with lmn_suff
     if(Vtype == "acf") {
-      suff <- lmn.suff(Y = Y, X = XX, V = acf, Vtype = Vtype)
+      suff <- lmn_suff(Y = Y, X = XX, V = acf, Vtype = Vtype)
     } else {
-      suff <- lmn.suff(Y = Y, X = XX, V = VV, Vtype = Vtype)
+      suff <- lmn_suff(Y = Y, X = XX, V = VV, Vtype = Vtype)
     }
     Bhat <- suff$Bhat
     Sigma.hat <- suff$S/suff$n

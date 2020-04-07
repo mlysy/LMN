@@ -1,13 +1,13 @@
 #' Marginal log-posterior for the LMN model.
 #'
 #' @template param-suff
-#' @param prior A list with elements \code{Lambda}, \code{Omega}, \code{Psi}, \code{nu} corresponding to the parameters of the prior MNIW distribution.  See \code{\link{lmn.prior}}.
-#' @param post A list with elements \code{Lambda}, \code{Omega}, \code{Psi}, \code{nu} corresponding to the parameters of the posterior MNIW distribution.  See \code{\link{lmn.post}}.
+#' @param prior A list with elements `Lambda`, `Omega`, `Psi`, `nu` corresponding to the parameters of the prior MNIW distribution.  See [lmn_prior()].
+#' @param post A list with elements `Lambda`, `Omega`, `Psi`, `nu` corresponding to the parameters of the posterior MNIW distribution.  See [lmn_post()].
 #' @return The scalar value of the marginal log-posterior.
 #'
-#' @example examples/lmn-marg.R
+#' @example examples/lmn_marg.R
 #' @export
-lmn.marg <- function(suff, prior, post) {
+lmn_marg <- function(suff, prior, post) {
   if(class(suff) != "lmn_suff") {
     stop("suff must be an object of class 'lmn_suff'.")
   }

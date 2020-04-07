@@ -17,7 +17,7 @@
 #' where \eqn{\textrm{vec}(\boldsymbol{Y})}{vec(Y)} is a vector of length \eqn{nq} stacking the columns of of \eqn{\boldsymbol{Y}}{Y}, and \eqn{\boldsymbol{\Sigma} \otimes \boldsymbol{V}}{\Sigma \%x\% V} is the Kronecker product.
 #'
 #' The model above is referred to as a Linear Model with Nuisance parameters (LMN) \eqn{(\boldsymbol{B}, \boldsymbol{\Sigma})}{(B,\Sigma)}, with parameters of interest \eqn{\boldsymbol{\theta}}{\theta}.  That is, the \pkg{LMN} package provides tools to efficiently conduct inference on \eqn{\boldsymbol{\theta}}{\theta} first, and subsequently on \eqn{(\boldsymbol{B}, \boldsymbol{\Sigma})}{(B,\Sigma)}, by Frequentist profile likelihood or Bayesian marginal inference with a Matrix-Normal Inverse-Wishart (MNIW) conjugate prior on \eqn{(\boldsymbol{B}, \boldsymbol{\Sigma})}{(B,\Sigma)}.
-#' @import SuperGauss
+#' @importFrom SuperGauss Toeplitz
 #' @importFrom Rcpp evalCpp
 #' @useDynLib LMN, .registration = TRUE
 "_PACKAGE"
