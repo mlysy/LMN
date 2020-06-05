@@ -78,14 +78,17 @@ lmn_suff <- function(Y, X, V, Vtype, npred = 0) {
   Z[,1:q] <- Y
   if(!noBeta) Z[,q+(1:p)] <- X[1:n,]
   if(Vtype == "full") {
-    C <- chol(V[1:n,1:n])
     if(npred > 0) {
       Z[,q+p+(1:npred)] <- V[1:n,n+(1:npred)]
     }
-    # IP' * V^{-1} * IP
-    IP <- crossprod(backsolve(r = C, x = Z, transpose = TRUE))
-    # log|V|
-    ldV <- 2 * sum(log(diag(C)))
+    ## # IP' * V^{-1} * IP
+    ## C <- chol(V[1:n,1:n])
+    ## IP <- crossprod(backsolve(r = C, x = Z, transpose = TRUE))
+    ## # log|V|
+    ## ldV <- 2 * sum(log(diag(C)))
+    CIP <- CholeskyIP(V = V[1:n,1:n,drop=FALSE], Z = Z)
+    IP <- CIP$IP
+    ldV <- CIP$ldV
   } else if(Vtype ==  "diag") {
     IP <- matrix(0, q+p+npred, q+p+npred)
     if(length(V) == 1) {

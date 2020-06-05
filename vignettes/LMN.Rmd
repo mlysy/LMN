@@ -466,10 +466,10 @@ BSig_post <- lapply(lambda_post, function(lambda) {
 })
 BSig_post <- list2mniw(BSig_post) # convert to vectorized mniw format
 BSig_post <- mniw::rmniw(npost,
-                          Lambda = BSig_post$Lambda,
-                          Omega = BSig_post$Omega,
-                          Psi = BSig_post$Psi,
-                          nu = BSig_post$nu)
+                         Lambda = BSig_post$Lambda,
+                         Omega = BSig_post$Omega,
+                         Psi = BSig_post$Psi,
+                         nu = BSig_post$nu)
 # convert to Theta = (gamma, mu, sigma, lambda)
 Theta_post <- cbind(gamma = BSig_post$X[1,1,],
                     mu = BSig_post$X[2,1,]/BSig_post$X[1,1,],

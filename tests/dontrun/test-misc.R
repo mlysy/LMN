@@ -2,6 +2,19 @@
 
 require(LMN)
 
+# Cholesky
+
+N <- sample(10, 1)
+q <- sample(5, 1)
+V <- crossprod(matrix(rnorm(N^2),N,N))
+Z <- matrix(rnorm(N*q), N, q)
+C <- chol(V)
+IP <- crossprod(backsolve(C, Z, transpose = TRUE))
+ldV <- 2.0 * sum(log(diag(C)))
+CIP <- LMN:::CholeskyIP(V, Z)
+range(CIP$IP - IP)
+range(CIP$ldV - ldV)
+
 # DurbinLevinson
 
 calcMode <- 0

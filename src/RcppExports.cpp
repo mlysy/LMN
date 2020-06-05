@@ -6,6 +6,18 @@
 
 using namespace Rcpp;
 
+// CholeskyIP
+Rcpp::List CholeskyIP(Eigen::MatrixXd V, Eigen::MatrixXd Z);
+RcppExport SEXP _LMN_CholeskyIP(SEXP VSEXP, SEXP ZSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type V(VSEXP);
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type Z(ZSEXP);
+    rcpp_result_gen = Rcpp::wrap(CholeskyIP(V, Z));
+    return rcpp_result_gen;
+END_RCPP
+}
 // DurbinLevinson_XZ
 Eigen::MatrixXd DurbinLevinson_XZ(Eigen::MatrixXd X, Eigen::VectorXd acf);
 RcppExport SEXP _LMN_DurbinLevinson_XZ(SEXP XSEXP, SEXP acfSEXP) {
@@ -60,6 +72,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_LMN_CholeskyIP", (DL_FUNC) &_LMN_CholeskyIP, 2},
     {"_LMN_DurbinLevinson_XZ", (DL_FUNC) &_LMN_DurbinLevinson_XZ, 2},
     {"_LMN_DurbinLevinson_ZX", (DL_FUNC) &_LMN_DurbinLevinson_ZX, 2},
     {"_LMN_DurbinLevinson_Eigen", (DL_FUNC) &_LMN_DurbinLevinson_Eigen, 4},
