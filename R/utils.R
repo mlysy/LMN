@@ -116,6 +116,8 @@ toeplitz2 <- function(col, row, debug = FALSE) {
 #'
 #' @noRd
 solveV <- function(V, x, ldV = FALSE) {
+  ## C <- tryCatch(chol(V), error = function(e) NULL)
+  ## if(is.null(C)) browser()
   C <- chol(V)
   if(missing(x)) x <- diag(nrow(V))
   ans <- backsolve(r = C, x = backsolve(r = C, x = x, transpose = TRUE))

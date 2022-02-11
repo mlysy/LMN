@@ -20,7 +20,7 @@ lmn_suff(Y, X, V, Vtype, npred = 0)
 \item \code{Vtype = "full"}: \code{V} is an \verb{N x N} symmetric positive-definite matrix.
 \item \code{Vtype = "diag"}: \code{V} is a vector of length \code{N} such that \code{V = diag(V)}.
 \item \code{Vtype = "scalar"}: \code{V} is a scalar such that \code{V = V * diag(N)}.
-\item \code{Vtype = "acf"}: \code{V} is either a vector of length \code{N}, or an object of class \code{\link[SuperGauss:Toeplitz]{SuperGauss::Toeplitz}} such that \code{V = toeplitz(V)}.
+\item \code{Vtype = "acf"}: \code{V} is either a vector of length \code{N} or an object of class \code{\link[SuperGauss:Toeplitz]{SuperGauss::Toeplitz}}, such that \code{V = toeplitz(V)}.
 }
 
 For \code{V} specified as a matrix or scalar, \code{Vtype} is deduced automatically and need not be specified.}
@@ -61,19 +61,19 @@ vec(Y) ~ N( vec(X B), \Sigma \%x\% V ),
 }
 where \eqn{\textrm{vec}(\boldsymbol{Y})}{vec(Y)} is a vector of length \eqn{nq} stacking the columns of of \eqn{\boldsymbol{Y}}{Y}, and \eqn{\boldsymbol{\Sigma} \otimes \boldsymbol{V}}{\Sigma \%x\% V} is the Kronecker product.
 
-The function \code{lmn.suff} returns everything needed to efficiently calculate the likelihood function
+The function \code{lmn_suff()} returns everything needed to efficiently calculate the likelihood function
 \deqn{\mathcal{L}(\boldsymbol{B}, \boldsymbol{\Sigma} \mid \boldsymbol{Y}, \boldsymbol{X}, \boldsymbol{V}) = p(\boldsymbol{Y} \mid \boldsymbol{X}, \boldsymbol{V}, \boldsymbol{B}, \boldsymbol{\Sigma}).
 }{
 L(B, \Sigma | Y, X, V) = p(Y | X, V, B, \Sigma).
 }
 
-When \code{npred > 0}, define the variables \code{Y_star = rbind(Y, y)}, \code{X_star = rbind(X, x)}, and \code{V_star = rbind(cbind(V, w), cbind(t(w), v))}.  Then \code{lmn.suff} calculates summary statistics required to estimate the conditional distribution
+When \code{npred > 0}, define the variables \code{Y_star = rbind(Y, y)}, \code{X_star = rbind(X, x)}, and \code{V_star = rbind(cbind(V, w), cbind(t(w), v))}.  Then \code{lmn_suff()} calculates summary statistics required to estimate the conditional distribution
 \deqn{
 p(\boldsymbol{y} \mid \boldsymbol{Y}, \boldsymbol{X}_\star, \boldsymbol{V}_\star, \boldsymbol{B}, \boldsymbol{\Sigma}).
 }{
 p(y | Y, X_star, V_star, B, \Sigma).
 }
-The inputs to \code{lmn.suff} in this case are \code{Y = Y}, \code{X = X_star}, and \code{V = V_star}.
+The inputs to \code{lmn_suff()} in this case are \code{Y = Y}, \code{X = X_star}, and \code{V = V_star}.
 }
 \examples{
 # Data

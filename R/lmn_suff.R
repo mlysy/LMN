@@ -11,7 +11,7 @@
 #' - `Vtype = "full"`: `V` is an `N x N` symmetric positive-definite matrix.
 #' - `Vtype = "diag"`: `V` is a vector of length `N` such that `V = diag(V)`.
 #' - `Vtype = "scalar"`: `V` is a scalar such that `V = V * diag(N)`.
-#' - `Vtype = "acf"`: `V` is either a vector of length `N`, or an object of class [`SuperGauss::Toeplitz`] such that `V = toeplitz(V)`.
+#' - `Vtype = "acf"`: `V` is either a vector of length `N` or an object of class [`SuperGauss::Toeplitz`], such that `V = toeplitz(V)`.
 #'
 #' For `V` specified as a matrix or scalar, `Vtype` is deduced automatically and need not be specified.
 #' @param npred A nonnegative integer.  If positive, calculates sufficient statistics to make predictions for new responses. See **Details**.
@@ -46,19 +46,19 @@
 #' }
 #' where \eqn{\textrm{vec}(\boldsymbol{Y})}{vec(Y)} is a vector of length \eqn{nq} stacking the columns of of \eqn{\boldsymbol{Y}}{Y}, and \eqn{\boldsymbol{\Sigma} \otimes \boldsymbol{V}}{\Sigma \%x\% V} is the Kronecker product.
 #'
-#' The function `lmn.suff` returns everything needed to efficiently calculate the likelihood function
+#' The function `lmn_suff()` returns everything needed to efficiently calculate the likelihood function
 #' \deqn{\mathcal{L}(\boldsymbol{B}, \boldsymbol{\Sigma} \mid \boldsymbol{Y}, \boldsymbol{X}, \boldsymbol{V}) = p(\boldsymbol{Y} \mid \boldsymbol{X}, \boldsymbol{V}, \boldsymbol{B}, \boldsymbol{\Sigma}).
 #' }{
 #' L(B, \Sigma | Y, X, V) = p(Y | X, V, B, \Sigma).
 #' }
 #'
-#' When `npred > 0`, define the variables `Y_star = rbind(Y, y)`, `X_star = rbind(X, x)`, and `V_star = rbind(cbind(V, w), cbind(t(w), v))`.  Then `lmn.suff` calculates summary statistics required to estimate the conditional distribution
+#' When `npred > 0`, define the variables `Y_star = rbind(Y, y)`, `X_star = rbind(X, x)`, and `V_star = rbind(cbind(V, w), cbind(t(w), v))`.  Then `lmn_suff()` calculates summary statistics required to estimate the conditional distribution
 #' \deqn{
 #' p(\boldsymbol{y} \mid \boldsymbol{Y}, \boldsymbol{X}_\star, \boldsymbol{V}_\star, \boldsymbol{B}, \boldsymbol{\Sigma}).
 #' }{
 #' p(y | Y, X_star, V_star, B, \Sigma).
 #' }
-#' The inputs to `lmn.suff` in this case are `Y = Y`, `X = X_star`, and `V = V_star`.
+#' The inputs to `lmn_suff()` in this case are `Y = Y`, `X = X_star`, and `V = V_star`.
 #'
 #' @example examples/lmn_suff.R
 #' @export
@@ -109,7 +109,12 @@ lmn_suff <- function(Y, X, V, Vtype, npred = 0) {
     ldV <- DL$ldV
   } else if(Vtype == "Toeplitz") {
     Tz <- V
-    IP <- crossprod(Z, V$solve(Z))
+    if(npred > 0) {
+      acf <- Tz$get_acf()
+      Z[,q+p+(1:npred)] <- toeplitz2(rev(acf[1+1:n]), acf[n+1:npred])
+      Tz <- SuperGauss::Toeplitz$new(acf = acf[1:n])
+    }
+    IP <- crossprod(Z, Tz$solve(Z))
     ldV <- Tz$log_det()
   } else {
     stop("Unrecognized variance type.")
@@ -121,6 +126,7 @@ lmn_suff <- function(Y, X, V, Vtype, npred = 0) {
     T <- NULL
   } else {
     T <- IP[q+(1:p),q+(1:p),drop=FALSE]
+    ## if(anyNA(T)) browser()
     Bhat <- solveV(T, IP[q+(1:p),1:q,drop=FALSE])
     S <- S - IP[1:q,q+(1:p)] %*% Bhat
   }
@@ -140,7 +146,7 @@ lmn_suff <- function(Y, X, V, Vtype, npred = 0) {
       } else {
         Vp <- diag(V[n+(1:npred)], npred)
       }
-    } else if(Vtype == "acf") {
+    } else if(Vtype %in% c("acf", "Toeplitz")) {
       Vp <- stats::toeplitz(acf[1:npred])
     } else {
       stop("Unrecognized variance type.")
@@ -161,6 +167,7 @@ lmn_suff <- function(Y, X, V, Vtype, npred = 0) {
 .get_Vtype <- function(V, Vtype, n, npred) {
   N <- n + npred
   if(is.numeric(V)) {
+    # full, scalar, diag, or acf
     if(length(V) == 1) {
       # scalar
       if(!missing(Vtype) && Vtype != "scalar") {
@@ -184,12 +191,13 @@ lmn_suff <- function(Y, X, V, Vtype, npred = 0) {
       }
     }
   } else if(SuperGauss::is.Toeplitz(V) && nrow(V) == N) {
+    # SuperGauss::Toeplitz
     if(!missing(Vtype) && Vtype != "acf") {
       stop("Incompatible V and Vtype.")
     } else {
       Vtype <- "Toeplitz"
     }
-    if(npred > 0) stop("npred > 0 for V of class 'Toeplitz' not supported.")
+    ## if(npred > 0) stop("npred > 0 for V of class 'Toeplitz' not supported.")
   } else {
     if(!is.numeric(V)) {
       stop("V is of unrecognized type.")
