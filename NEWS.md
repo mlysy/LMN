@@ -1,3 +1,7 @@
+# LMN 1.1.1
+
+* Enabled `npred > 0` in `lmn_suff()` for variance of type `SuperGauss::Toeplitz`.
+
 # LMN 1.1
 
 ## Changes to interface

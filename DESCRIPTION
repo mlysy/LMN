@@ -1,8 +1,8 @@
 Package: LMN
 Type: Package
 Title: Inference for Linear Models with Nuisance Parameters
-Version: 1.1
-Date: 2020-04-07
+Version: 1.1.1
+Date: 2022-02-11
 Authors@R: c(person("Martin", "Lysy",
                     email = "mlysy@uwaterloo.ca", role = c("aut", "cre")),
              person("Bryan", "Yates", role = "aut"))
@@ -14,7 +14,7 @@ Imports:
     Rcpp (>= 0.12.4.4), SuperGauss, stats
 LinkingTo: Rcpp, RcppEigen
 Encoding: UTF-8
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.2
 Roxygen: list(markdown = TRUE)
 Suggests: testthat, numDeriv, mniw, knitr, rmarkdown, kableExtra
 VignetteBuilder: knitr

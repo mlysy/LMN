@@ -42,12 +42,18 @@
 
 - [x] Remove `debug` arguments.
 
-- [ ] Package name -- should it be `lmn`???
+- [x] ~~Package name -- should it be `lmn`???~~
+
+	No, I don't think this is worth doing at this point.
 
 - [x] Use `solveV` instead of `solve` for variance matrices. 
 
 - [ ] Translate to C++ :)
 
+	Probably not worth the effort any time soon...
+
 - [x] Remove `old` files (under `git` version control anyways). 
 
 - [ ] Remove `src/DurbinLevison*` methods, and call them from **SuperGauss** instead.
+
+	This means exposing the DL IP method in SuperGauss to call it from here...

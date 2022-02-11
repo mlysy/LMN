@@ -5,6 +5,3 @@ doc
 *.dll
 *.so
 *.DS_Store
-
-# for github vignette
-!doc 

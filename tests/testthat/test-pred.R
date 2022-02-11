@@ -6,7 +6,7 @@ context("Predictions")
 test_that("Prediction statistics are correctly computed.", {
   calc.diff <- FALSE
   case.par <- expand.grid(p = c(-1, 0, 1, 3, 5), q = c(1, 3, 5),
-                          Vtype = c("scalar", "diag", "acf", "full"),
+                          Vtype = c("scalar", "diag", "acf", "Toeplitz", "full"),
                           noSigma = c(TRUE, FALSE),
                           npred = c(1, 5))
   ncases <- nrow(case.par)
@@ -49,6 +49,9 @@ test_that("Prediction statistics are correctly computed.", {
     # calculate with lmn_suff
     if(Vtype == "acf") {
       suff <- lmn_suff(Y = Y, X = XX, V = acf, Vtype = Vtype, npred = npred)
+    } else if(Vtype == "Toeplitz") {
+      suff <- lmn_suff(Y = Y, X = XX, V = Toeplitz$new(acf = acf),
+                       npred = npred)
     } else {
       suff <- lmn_suff(Y = Y, X = XX, V = VV, Vtype = Vtype, npred = npred)
     }
