@@ -1,3 +1,9 @@
+# set the seed if we're on cran
+if(!identical(Sys.getenv("NOT_CRAN"), "true")) {
+  set.seed(2022)
+}
+
+
 #' Random matrix of iid normals
 #' @param n Number or rows
 #' @param p Number of columns.  When omitted defaults to \code{p = n}.
