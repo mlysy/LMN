@@ -2,11 +2,12 @@
 title: "LMN: Inference for Linear Models with Nuisance Parameters"
 author: "Martin Lysy, Bryan Yates"
 date: "`r Sys.Date()`"
+pkgdown:
+  as_is: true
 output:
-  rmarkdown::html_vignette:
+  bookdown::html_vignette2:
     toc: true
-  bookdown::html_document2:
-    base_format: rmarkdown::html_vignette
+    number_sections: no
 bibliography: references.bib
 csl: taylor-and-francis-harvard-x.csl
 link-citations: true
@@ -31,6 +32,7 @@ suppressMessages({
 })
 cran_link <- function(pkg) paste0("[**", pkg, "**](https://CRAN.R-project.org/package=", pkg, ")")
 build_cache <- FALSE
+oldpar <- par()
 ```
 
 \newcommand{\YY}{{\boldsymbol{Y}}}
@@ -77,7 +79,7 @@ build_cache <- FALSE
 Consider a statistical model $p(\YY \mid \tth, \BBe, \SSi)$ of the form
 \begin{equation}
 \YY \sim \MN(\XX_\tth \BBe, \VV_\tth, \SSi),
-\label{eq:lmn}
+(\#eq:lmn)
 \end{equation}
 $\XX_\tth = \XX_{n \times p}(\tth)$ is the design matrix which depends on parameters $\tth$, $\BBe_{p \times q}$ are regression coefficients, $\VV_\tth = \VV_{n \times n}(\tth)$ and $\SSi_{q \times q}$ are between-row and between-column variance matrices, and the [Matrix-Normal](https://en.wikipedia.org/wiki/Matrix_normal_distribution) distribution is defined as
 $$
@@ -85,7 +87,7 @@ $$
 $$
 where $\vec(\ZZ)$ is a vector stacks the columns of $\ZZ$, and $\SSi \otimes \OOm$ denotes the [Kronecker product](https://en.wikipedia.org/wiki/Kronecker_product).
 
-Model \\eqref{eq:lmn} is referred to as a Linear Model with Nuisance parameters (LMN) $(\BBe, \SSi)$ for parameters of interest $\tth$.  The **LMN** package provides tools to efficiently conduct Frequentist or Bayesian inference on all parameters $\TTh = (\tth, \BBe, \SSi)$ by estimating $\tth$ first, and subsequently $(\BBe, \SSi)$, as illustrated in the examples below.
+Model \@ref(eq:lmn) is referred to as a Linear Model with Nuisance parameters (LMN) $(\BBe, \SSi)$ for parameters of interest $\tth$.  The **LMN** package provides tools to efficiently conduct Frequentist or Bayesian inference on all parameters $\TTh = (\tth, \BBe, \SSi)$ by estimating $\tth$ first, and subsequently $(\BBe, \SSi)$, as illustrated in the examples below.
 
 <!-- The **LMN** package provides several functions to facilitate inference with multivariate regression models of the form -->
 <!-- $$ -->
@@ -140,13 +142,13 @@ legend("bottomright",
 Consider a toy example of the form
 \begin{equation}
 y_{ij} = \beta_{0j} + \beta_{1j} x_i^\alpha + \eps_{ij},
-\label{eq:toy}
+(\#eq:toy)
 \end{equation}
 where $i=1,\ldots,n$, $j=1,\ldots,q$, and the $\eps_{ij}$ are multivariate normal with $E[\eps_{ij}] = 0$ and
 $$
 \cov(\eps_{ik}, \eps_{jm}) = \Sigma_{ij} \times \exp\left\{-\frac{(x_k - x_m)^2}{\lambda^2}\right\}.
 $$
-Then this toy example can be written in the form of \\eqref{eq:lmn} with $\tth = (\alpha, \lambda)$ and
+Then this toy example can be written in the form of \@ref(eq:lmn) with $\tth = (\alpha, \lambda)$ and
 <!-- , $\YY_{n\times q} = [y_{ij}]$, $\VV_{n\times n}(\tth) = [V_{ij}(\lambda)]$ where $V_{ij}(\lambda) = \exp\{-(x_i-x_j)^2/\lambda^2\}$, $\Sigma_{q \times q} = [\Sigma_{ij}]$, and -->
 $$
 \begin{aligned}
@@ -162,14 +164,14 @@ $$
 \end{aligned}
 $$
 Sample data is generated below with $n = `r n`$ and $q = `r qq`$.  Note the use of `mniw::rMNorm()` from the **mniw** package to sample from the Matrix Normal.
-```{r toy_sim, ref.label = "toy_sim_calc", fig.height = 4, fig.width = 6.5, fig.cap = paste0("Simulated data from the toy model \\\\eqref{eq:toy} with $n = ", n, "$ and $q = ", qq, "$.")}
+```{r toysim, ref.label = "toy_sim_calc", fig.height = 4, fig.width = 6.5, fig.cap = paste0("Simulated data from the toy model \\@ref(eq:toy) with $n = ", n, "$ and $q = ", qq, "$.")}
 ```
 The workhorse function in **LMN** is `lmn_suff()`, which calculates the sufficient statistics for $(\BBe, \SSi)$ for a given value of $\tth$.
 ```{r}
 suff <- lmn_suff(Y = Y, X = X, V = V, Vtype = "full")
 sapply(suff, function(x) paste0(dim(as.array(x)), collapse = "x"))
 ```
-Namely, the elements of `suff` are:
+Namely, the elements of `suff` are:<a name="eqsuff"></a>
 
   - `Bhat`: The $p \times q$ matrix $\hat \BBe_\tth = (\XX_\tth'\VV_\tth^{-1}\XX_\tth)^{-1}\XX_\tth'\VV_\tth^{-1}\YY$.
   - `T`: The $p \times p$ matrix $\TT_\tth = \XX_\tth'\VV_\tth^{-1}\XX_\tth$.
@@ -320,14 +322,14 @@ N <- 12 * 20 # number of observations (20 years)
 In @chan.etal92, a model for the interest rate $R_t$ as a function of time is given by the stochastic differential equation (SDE)
 \begin{equation}
 \ud R_t = -\g(R_t - \mu) \dt + \s R_t^\l\ud B_t,
-\label{eq:chan}
+(\#eq:chan)
 \end{equation}
 where $B_t$ is Brownian motion and the parameters are restricted to $\gamma, \mu, \sigma, \lambda > 0$.  Suppose the data $\RR = (R_0, \ldots, R_N)$ consists of equispaced observations $R_n = R_{n\cdot \dt}$ with interobservation time $\dt$.  A commonly-used discrete-time approximation is given by
 \begin{equation}
 R_{n+1} \mid R_0,\ldots,R_n \sim \N\big(R_n - \g(R_n - \mu)\dt, \s^2 R_n^{2\l} \dt\big).
-\label{eq:euler}
+(\#eq:euler)
 \end{equation}
-Sample data from the discrete-time approximation \\eqref{eq:euler} to the so-called generalized [Cox-Ingersoll-Ross](https://en.wikipedia.org/wiki/Cox%E2%80%93Ingersoll%E2%80%93Ross_model) (gCIR) model \\eqref{eq:chan} is generated below, with $\dt = 1/12$ (one month) $N = `r N`$ (20 years), and true parameter values `r paste0("$\\TTh = (\\gamma, \\mu, \\sigma, \\lambda) = (", paste0(Theta, collapse = ", "), ")$")`. 
+Sample data from the discrete-time approximation \@ref(eq:euler) to the so-called generalized [Cox-Ingersoll-Ross](https://en.wikipedia.org/wiki/Cox%E2%80%93Ingersoll%E2%80%93Ross_model) (gCIR) model \@ref(eq:chan) is generated below, with $\dt = 1/12$ (one month) $N = `r N`$ (20 years), and true parameter values `r paste0("$\\TTh = (\\gamma, \\mu, \\sigma, \\lambda) = (", paste0(Theta, collapse = ", "), ")$")`. 
 
 <!-- `r paste0("$\\", names(Theta), " = ", Theta, "$", collapse = ", ")`. -->
 
@@ -339,12 +341,12 @@ par(mar = c(4,4,.5,.5))
 plot(x = 0:N*dt, y = 100*Rt, pch = 16, cex = .8,
      xlab = "Time (years)", ylab = "Interest Rate (%)")
 ```
-```{r, gcir_data, ref.label = c("gcir_setup", "gcir_sim"), echo = -1, fig.height = 4, fig.width = 6.5, fig.cap = paste0("Simulated interest rates from discrete-time approximation \\\\eqref{eq:euler} to the gCIR model \\\\eqref{eq:chan}, with $N = ", N, "$, $\\dt = 1/12$, and $\\TTh = (", paste0(Theta, collapse = ", "), ")$.")}
+```{r, gcirdata, ref.label = c("gcir_setup", "gcir_sim"), echo = -1, fig.height = 4, fig.width = 6.5, fig.cap = paste0("Simulated interest rates from discrete-time approximation \\@ref(eq:euler) to the gCIR model \\@ref(eq:chan), with $N = ", N, "$, $\\dt = 1/12$, and $\\TTh = (", paste0(Theta, collapse = ", "), ")$.")}
 ```
 
 ### Bayesian Inference
 
-The likelihood for $\TTh$ is of LMN form \\eqref{eq:lmn} with $\tth = \lambda$, $\BBe_{2 \times 1} = (\gamma, \gamma \mu)$, $\SSi_{1 \times 1} = \sigma^2$, and 
+The likelihood for $\TTh$ is of LMN form \@ref(eq:lmn) with $\tth = \lambda$, $\BBe_{2 \times 1} = (\gamma, \gamma \mu)$, $\SSi_{1 \times 1} = \sigma^2$, and 
 $$
 \begin{aligned}
 \YY_{N\times 1} & = \begin{bmatrix} R_1 - R_0 \\ \vdots \\ R_N - R_{N-1} \end{bmatrix}, & \XX_{N \times 2} & = \begin{bmatrix} - R_0 \dt & \dt \\ \vdots & \vdots \\ - R_{N-1} \dt & \dt \end{bmatrix}, & \VV_{N \times N}(\lambda) & = \begin{bmatrix} X_0^{2\lambda} \dt & & 0 \\ & \ddots & \\ 0 & & X_{N-1}^{2\lambda} \dt\end{bmatrix}.
@@ -388,28 +390,29 @@ Theta_mle
 However, we can see that the profile likelihood method produces negative estimates of $\gamma$ and $\mu$, i.e., outside of the parameter support.  We could try to restrict or penalize the likelihood optimization problem to obtain an admissible MLE, but then the profile likelihood simplifications would no longer apply.
 
 Instead, consider the following Bayesian approach.  First, we note that the conjugate prior for $(\BBe, \SSi)$ in the LMN model conditional on $\tth$ is the Matrix-Normal Inverse-Wishart (MNIW) distribution,
-\begin{equation}
+$$
 \BBe, \SSi \mid \tth \sim \mniw(\LLa_\tth, \OOm_\tth, \PPs_\tth, \nu_\tth) \qquad \iff \qquad \begin{aligned}
 \BBe \mid \SSi & \sim \MN(\LLa_\tth, \OOm_\tth^{-1}, \SSi) \\
 \SSi & \sim \iwish(\PPs_\tth, \nu_\tth),
 \end{aligned}
+$$
+where $\iwish$ denotes the [Inverse-Wishart](https://en.wikipedia.org/wiki/Inverse-Wishart_distribution) distribution, and the hyperparameters $\PPh_\tth = (\LLa_\tth, \OOm_\tth, \PPs_\tth, \nu_\tth)$ can depend on $\tth$.  Thus, for the prior distribution $\pi(\BBe, \SSi, \tth)$ given by
+
+\begin{equation}
+\begin{aligned}
+\tth & \sim \pi(\tth) \\
+\BBe, \SSi \mid \tth & \sim \mniw(\LLa_\tth, \OOm_\tth, \PPs_\tth, \nu_\tth),
+\end{aligned}
+(\#eq:conjprior)
 \end{equation}
-where $\iwish$ denotes the [Inverse-Wishart](https://en.wikipedia.org/wiki/Inverse-Wishart_distribution) distribution, and the hyperparameters $\PPh_\tth = (\LLa_\tth, \OOm_\tth, \PPs_\tth, \nu_\tth)$ can depend on $\tth$.  This leads to the following analytical results:
 
-- The conjugate posterior distribution $p(\BBe, \SSi \mid \YY, \tth)$ is also $\mniw$, with closed-form expressions for the hyperparameters $\hat \PPh_\tth = (\hat \LLa_\tth, \hat \OOm_\tth, \hat \PPs_\tth, \hat \nu_\tth)$ calculated by `lmn_post()`.
+we have the following analytical results:
 
-- Given a prior distribution
+1. The conjugate posterior distribution $p(\BBe, \SSi \mid \YY, \tth)$ is also $\mniw$, with closed-form expressions for the hyperparameters $\hat \PPh_\tth = (\hat \LLa_\tth, \hat \OOm_\tth, \hat \PPs_\tth, \hat \nu_\tth)$ calculated by `lmn_post()`.
 
-    $$
-	\begin{aligned}
-	\tth & \sim \pi(\tth) \\
-	\BBe, \SSi \mid \tth & \sim \mniw(\LLa_\tth, \OOm_\tth, \PPs_\tth, \nu_\tth),
-	\end{aligned}
-	$$
+2.  The marginal posterior distribution $p(\tth \mid \YY)$ has a closed-form expression calculated by `lmn_marg()`.
 	
-	The marginal posterior distribution $p(\tth \mid \YY)$ has a closed-form expression calculated by `lmn_marg()`.
-	
-Putting these results together, we can efficiently conduct Bayesian inference for LMN models by first sampling $\tth^{(1)}, \ldots, \tth^{(B)} \sim p(\tth \mid \YY)$, then conditionally sampling $(\BBe^{(b)}, \SSi^{(b)}) \ind \mniw(\hat \PPh_{\tth^{(b)}})$ for $b = 1,\ldots, B$.  This is done in the R code below with the default prior
+Both closed-form expressions are provided [below](#app).  Putting these results together, we can efficiently conduct Bayesian inference for LMN models by first sampling $\tth^{(1)}, \ldots, \tth^{(B)} \sim p(\tth \mid \YY)$, then conditionally sampling $(\BBe^{(b)}, \SSi^{(b)}) \ind \mniw(\hat \PPh_{\tth^{(b)}})$ for $b = 1,\ldots, B$.  This is done in the R code below with the default prior
 $$
 \pi(\TTh) \propto |\SSi|^{-(q+1)/2},
 $$
@@ -489,7 +492,7 @@ $$
 
 Posterior parameter distributions from the corresponding rejection sampler are displayed below.
 
-```{r gcir_hist, fig.width = 6.5, fig.height = 5, fig.cap = "Posterior distribution and true value for each gCIR parameter $\\TTh = (\\gamma, \\mu, \\sigma, \\lambda)$."}
+```{r gcirhist, fig.width = 6.5, fig.height = 5, fig.cap = "Posterior distribution and true value for each gCIR parameter $\\TTh = (\\gamma, \\mu, \\sigma, \\lambda)$."}
 # keep only draws for which gamma, mu > 0
 ikeep <- pmin(Theta_post[,1], Theta_post[,2]) > 0
 mean(ikeep) # a good number of draws get discarded
@@ -515,6 +518,33 @@ for(ii in 1:ncol(Theta_post)) {
            col = c("black", "red"), bg = c("white", NA), cex = .85)
   }
 }
+```
+
+## Appendix: Conjugate Posteriors for LMNs {#app}
+
+For the regression model \@ref(eq:lmn) with conjugate prior \@ref(eq:conjprior), the posterior distribution $p(\BBe, \SSi, \tth \mid \YY)$ is given by
+
+$$
+\begin{aligned}
+\tth \mid \YY & \sim p(\tth \mid \YY) \propto \pi(\tth) \frac{\Xi(\PPs_{\tth}, \nu_{\tth})}{\Xi(\hat\PPs_{\tth},\hat\nu_{\tth})} \left(\frac{|\OOm_{\tth}|(2\pi)^{-n}}{|\hat \OOm_{\tth}||\VV_{\tth}|}\right)^{q/2} \\
+\BBe, \SSi \mid \tth, \YY & \sim \mniw(\hat \LLa_\tth, \hat\OOm_\tth, \hat \PPs_\tth, \hat \nu_\tth),
+\end{aligned}
+$$
+
+where
+
+$$
+\begin{aligned}
+\Xi(\PPs,\nu) & = \frac{|\PPs|^{\nu/2}}{\sqrt{2^{\nu q}} \Gamma_q(\tfrac \nu 2)}, & \Gamma_q(a) & = \pi^{q(q-1)/4} \prod_{j=1}^q \Gamma[a + \tfrac 1 2(1-j)], \\
+\hat \OOm_{\tth} & = \OOm_{\tth} + \TT_{\tth}, & \hat \LLa_{\tth} & = \hat \OOm_{\tth}^{-1}(\TT_{\tth} \hat \BBe_{\tth} + \OOm_{\tth} \LLa_{\tth}), \\
+\hat \nu_{\tth} & = \nu_{\tth} + n, & \hat \PPs_{\tth} & = \PPs_{\tth} + \SS_{\tth} + \hat \BBe_{\tth}' \TT_{\tth} \hat \BBe_{\tth} + \LLa_{\tth}' \OOm_{\tth} \LLa_{\tth} - \hat \LLa_{\tth}' \hat \OOm_{\tth} \hat \LLa_{\tth},
+\end{aligned}
+$$
+
+and $\TT_{\tth}$, $\SS_{\tth}$ and $\hat \BBe_{\tth}$ are outputs from `lmn_suff()` defined [above](#eqsuff).
+
+```{r teardown, include = FALSE}
+par(oldpar)
 ```
 
 ## References
