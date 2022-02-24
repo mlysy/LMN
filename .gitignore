@@ -5,3 +5,5 @@ doc
 *.dll
 *.so
 *.DS_Store
+/doc/
+/Meta/

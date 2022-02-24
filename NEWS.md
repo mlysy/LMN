@@ -1,3 +1,7 @@
+# LMN 1.1.2
+
+* Set seed in tests to avoid random test failures on CRAN.
+
 # LMN 1.1.1
 
 * Enabled `npred > 0` in `lmn_suff()` for variance of type `SuperGauss::Toeplitz`.
