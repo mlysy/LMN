@@ -2,6 +2,7 @@
 # this does not work reliably, so just always set seed.
 if(TRUE || !identical(Sys.getenv("NOT_CRAN"), "true")) {
   set.seed(2022)
+  ## testthat_print(paste0("seeded at: ", signif(runif(1), 3)))
 }
 
 
